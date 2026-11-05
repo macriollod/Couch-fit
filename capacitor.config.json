@@ -1,0 +1,7 @@
+{
+  "appId": "com.couchfit.app",
+  "appName": "Couch Fit",
+  "webDir": "www",
+  "backgroundColor": "#F6F0E4",
+  "android": { "allowMixedContent": false }
+}

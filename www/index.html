@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F6F0E4">
+<title>Couch Fit</title>
+<style>
+@font-face{font-family:'Nunito';font-weight:400;font-display:swap;src:url(fonts/nunito-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Nunito';font-weight:600;font-display:swap;src:url(fonts/nunito-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Nunito';font-weight:700;font-display:swap;src:url(fonts/nunito-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Nunito';font-weight:800;font-display:swap;src:url(fonts/nunito-latin-800-normal.woff2) format('woff2')}
+@font-face{font-family:'Outfit';font-weight:500;font-display:swap;src:url(fonts/outfit-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'Outfit';font-weight:600;font-display:swap;src:url(fonts/outfit-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Outfit';font-weight:700;font-display:swap;src:url(fonts/outfit-latin-700-normal.woff2) format('woff2')}
+:root{
+  /* Diseño: columna móvil de 560px, mapa muscular como protagonista, barra de pestañas inferior */
+  --orange:#E8702A;
+  --orange-btn:#C75718;
+  --orange-lt:#FBE3CF;
+  --bone:#F6F0E4;
+  --paper:#FFFBF2;
+  --line:#E5D9C6;
+  --brown:#7A5A42;
+  --brown-dk:#3D2A1D;
+  --brown-lt:#D8C7B0;
+  --display:'Outfit',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --body:'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bone);color:var(--brown-dk);font-family:var(--body);font-size:16px;line-height:1.45;-webkit-text-size-adjust:100%}
+button{font:inherit;color:inherit;cursor:pointer}
+input,select,textarea{font:inherit;color:var(--brown-dk)}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;letter-spacing:-.01em}
+:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+#app{max-width:560px;margin:0 auto;padding:16px 16px 104px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:4px 0 16px}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:38px;height:38px;border-radius:12px;background:var(--orange);display:grid;place-items:center}
+.logo svg{width:22px;height:22px}
+.brand b{font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:-.02em}
+.hello{font-size:15px;color:var(--brown)}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px}
+.card h2{font-size:19px;margin-bottom:4px}
+.card .sub{margin:0 0 12px;color:var(--brown);font-size:14.5px}
+.step{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--orange);color:#fff;font:700 13px var(--display);margin-right:8px;vertical-align:2px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1.5px solid var(--brown-lt);background:transparent;border-radius:999px;padding:7px 13px;font-size:14.5px;font-weight:600;color:var(--brown)}
+.chip[aria-pressed="true"]{background:var(--orange);border-color:var(--orange);color:#fff}
+.chip.fixed{opacity:.75;cursor:default}
+.chip.x::after{content:" ×";font-weight:800}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--bone);border:1px solid var(--line);border-radius:12px;padding:3px;gap:3px}
+.seg button{border:0;background:transparent;border-radius:9px;padding:8px 6px;font-weight:700;font-size:14px;color:var(--brown)}
+.seg button[aria-pressed="true"]{background:var(--orange);color:#fff}
+.lbl{display:block;font-size:13px;font-weight:800;color:var(--brown);text-transform:uppercase;letter-spacing:.05em;margin:14px 0 6px}
+.lbl:first-child{margin-top:0}
+.btn{display:block;width:100%;border:0;border-radius:14px;padding:14px 16px;font:700 17px var(--display);background:var(--orange-btn);color:#fff;text-align:center}
+.btn:active{transform:translateY(1px)}
+.btn.alt{background:transparent;color:var(--orange-btn);border:2px solid var(--orange-btn)}
+.btn.soft{background:var(--orange-lt);color:var(--brown-dk)}
+.btn.sm{display:inline-block;width:auto;padding:8px 14px;font-size:14.5px;border-radius:10px}
+.row{display:flex;gap:10px;align-items:center}
+.row.wrap{flex-wrap:wrap}
+.grow{flex:1}
+.stack{display:flex;flex-direction:column;gap:10px}
+/* mapa */
+.mapwrap{display:grid;grid-template-columns:1fr;justify-items:center;gap:10px}
+.fig{width:100%;max-width:210px;height:auto;display:block}
+.fig .sil *{fill:#EBDFCB}
+.fig .m{fill:#D9C4A5;stroke:var(--paper);stroke-width:1.4;transition:fill .15s}
+.fig.inter .m{cursor:pointer}
+.fig.inter .m:hover{fill:#F2B88F}
+.fig .m.sel,.fig .m.p{fill:var(--orange)}
+.fig .m.s{fill:#F5C49E}
+.fig.sm{max-width:92px}
+.sel-note{min-height:22px;text-align:center;font-size:14.5px;color:var(--brown)}
+.today{background:var(--orange-lt);border-color:#F1C6A3}
+.today p{margin:2px 0 10px}
+.tag{display:inline-block;font-size:12.5px;font-weight:700;border-radius:8px;padding:2px 8px;background:var(--bone);border:1px solid var(--line);color:var(--brown)}
+.tag.o{background:var(--orange-lt);border-color:#F1C6A3;color:#8A3E0D}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.li{display:flex;gap:12px;align-items:center;border:1px solid var(--line);background:var(--paper);border-radius:14px;padding:12px;margin-bottom:10px;text-align:left;width:100%}
+.li h3{font-size:16.5px;margin-bottom:4px}
+.li .meta{font-size:13.5px;color:var(--brown)}
+.rx{font:700 15px var(--display);color:var(--orange-btn);white-space:nowrap}
+.search{width:100%;border:1.5px solid var(--brown-lt);border-radius:12px;padding:11px 14px;background:var(--paper)}
+.field{width:100%;border:1.5px solid var(--brown-lt);border-radius:12px;padding:10px 12px;background:var(--paper)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.fl label{display:block;font-size:13px;font-weight:700;color:var(--brown);margin-bottom:4px}
+.day{display:grid;grid-template-columns:44px 1fr auto;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.day:first-of-type{border-top:0}
+.day .dn{font:700 15px var(--display);color:var(--brown)}
+.day.hoy .dn{color:var(--orange-btn)}
+.day .nm{font-weight:800}
+.day .ms{font-size:13px;color:var(--brown)}
+.day .rest{color:var(--brown);font-style:italic}
+.bar{height:10px;background:var(--bone);border:1px solid var(--line);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--orange)}
+.goal{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line)}
+.goal input[type=checkbox]{width:22px;height:22px;accent-color:var(--orange-btn)}
+.goal.done span{text-decoration:line-through;color:var(--brown)}
+.goal span{flex:1}
+.ibtn{border:0;background:transparent;color:var(--brown);font-size:20px;line-height:1;padding:6px 8px;border-radius:8px}
+/* barra inferior */
+#tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--paper);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+#tabs div{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+#tabs button{border:0;background:transparent;padding:10px 2px 9px;display:flex;flex-direction:column;align-items:center;gap:3px;font-weight:700;font-size:10.5px;letter-spacing:-.01em;white-space:nowrap;color:var(--brown)}
+#tabs svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+#tabs button[aria-current="page"]{color:var(--orange-btn)}
+/* capas */
+.layer{position:fixed;inset:0;background:var(--bone);overflow:auto;-webkit-overflow-scrolling:touch}
+.layer.sheet{background:rgba(61,42,29,.45);display:flex;align-items:flex-end;justify-content:center}
+.sheet .panel{background:var(--bone);width:100%;max-width:560px;max-height:92%;overflow:auto;border-radius:22px 22px 0 0;padding:18px 16px 28px}
+.page{max-width:560px;margin:0 auto;padding:12px 16px 40px}
+.bar-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.back{border:0;background:var(--paper);border:1px solid var(--line);border-radius:12px;width:42px;height:42px;font-size:20px}
+.steps{padding-left:22px;margin:8px 0 12px}
+.steps li{margin-bottom:8px}
+.tipbox{background:var(--orange-lt);border-radius:12px;padding:10px 12px;font-size:14.5px}
+.setrow{display:flex;gap:8px;flex-wrap:wrap}
+.setbtn{flex:1;min-width:76px;border:2px solid var(--brown-lt);background:var(--paper);border-radius:14px;padding:14px 8px;font:700 16px var(--display);color:var(--brown)}
+.setbtn[aria-pressed="true"]{background:var(--orange);border-color:var(--orange);color:#fff}
+.timer{font:700 54px var(--display);text-align:center;color:var(--orange-btn);font-variant-numeric:tabular-nums}
+.big{font:700 26px var(--display)}
+.dots{display:flex;gap:6px;justify-content:center;margin:6px 0 14px}
+.dots i{width:9px;height:9px;border-radius:50%;background:var(--brown-lt)}
+.dots i.on{background:var(--orange)}
+.dots i.cur{outline:2px solid var(--orange);outline-offset:2px}
+#toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:var(--brown-dk);color:#fff;padding:10px 16px;border-radius:12px;font-weight:700;font-size:14.5px;z-index:60;max-width:90%;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.on{opacity:1}
+.empty{color:var(--brown);text-align:center;padding:18px 6px}
+
+.chip.pre{border-color:var(--orange);color:var(--orange-btn)}
+.chip.pre[aria-pressed="true"]{color:#fff}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
+.pair>div{display:flex;flex-direction:column;align-items:center}
+.pair .fig{max-width:200px}
+.cap{font:700 13px var(--display);color:var(--brown);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.thumb{flex:none;width:60px;height:60px;border-radius:50%;background:#F1E8D7;overflow:hidden;display:grid;place-items:center;border:1px solid var(--line)}
+.thumb .fig{width:100%;max-width:none;height:100%}
+.grp{display:flex;align-items:center;gap:14px;width:100%;border:0;border-top:1px solid var(--line);background:none;padding:10px 0;text-align:left}
+.grp:first-of-type{border-top:0}
+.gn{flex:1;font:700 18px var(--display);text-transform:uppercase;letter-spacing:.02em}
+.cnt{font-size:13px;color:var(--brown)}
+.chev{color:var(--orange-btn);font-size:24px}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.cal .dh{font-size:12px;font-weight:800;color:var(--brown)}
+.cd{border:1.5px solid transparent;background:transparent;border-radius:10px;aspect-ratio:1;font-weight:700;color:var(--brown-dk);position:relative;padding:0}
+.cd.has{background:var(--orange-lt)}
+.cd.has::after{content:"";position:absolute;bottom:4px;left:50%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:var(--orange-btn)}
+.cd.tod{border-color:var(--brown-lt)}
+.cd.sel{background:var(--orange);color:#fff}
+.cd.sel::after{background:#fff}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.tile{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:12px 6px;text-align:center}
+.tile b{display:block;font:700 26px var(--display);color:var(--orange-btn);font-variant-numeric:tabular-nums}
+.tile span{font-size:12.5px;color:var(--brown)}
+.ch text{fill:var(--brown);font:600 11px var(--body)}
+.entry{border-top:1px solid var(--line);padding:10px 0}
+.entry:first-of-type{border-top:0}
+
+.ord{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#fff;color:var(--orange-btn);font:800 11px var(--display);margin-right:6px}
+.rhead{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;text-align:left;padding:14px;font:inherit}
+.rhead b{display:block;font:700 17px var(--display)}
+.rhead .meta{display:block;font-size:13.5px;color:var(--brown)}
+.demo{background:#F1E8D7;border:1px solid var(--line);border-radius:18px;padding:12px;margin-bottom:12px;display:flex;flex-direction:column;align-items:center;gap:8px}
+.demo .fig{max-width:230px;max-height:300px;width:auto;height:300px}
+.legend{display:flex;gap:14px;font-size:13px;color:var(--brown)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}
+.dot.p{background:var(--orange)}.dot.s{background:#EDB07F}
+.stepsbig{list-style:none;counter-reset:s;padding:0;margin:10px 0 14px}
+.stepsbig li{counter-increment:s;display:flex;gap:12px;align-items:flex-start;margin-bottom:12px}
+.stepsbig li::before{content:counter(s);flex:none;width:28px;height:28px;border-radius:50%;background:var(--orange);color:#fff;display:grid;place-items:center;font:700 14px var(--display)}
+.stepsbig li span{padding-top:3px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<nav id="tabs" aria-label="Secciones"></nav>
+<div id="layers"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+/* ================= Datos ================= */
+const MUS={pecho:'Pecho',hombros:'Hombros',biceps:'Bíceps',triceps:'Tríceps',antebrazos:'Antebrazos',abdomen:'Abdomen',oblicuos:'Oblicuos',cuadriceps:'Cuádriceps',trapecio:'Trapecio',espalda:'Espalda',lumbar:'Zona lumbar',gluteos:'Glúteos',isquios:'Isquiotibiales',pantorrillas:'Pantorrillas'};
+const MK=Object.keys(MUS);
+const EQ={cuerpo:'Peso corporal',cuerda:'Cuerda de saltar',banda:'Bandas elásticas',anillas:'Anillas o TRX',pelota:'Pelota suiza',rueda:'Rueda abdominal',balon:'Balón medicinal',step:'Step o cajón',mancuernas:'Mancuernas',kettlebell:'Kettlebell',barra:'Barra con discos',barraz:'Barra Z',banco:'Banco',dominadas:'Barra de dominadas',paralelas:'Paralelas o barras de fondos',polea:'Poleas',maquina:'Máquinas guiadas',rack:'Rack o soportes'};
+const EQLIST=['mancuernas','banda','barra','banco','rack','dominadas','paralelas','kettlebell','cuerda','step','pelota','rueda','balon','anillas','barraz','polea','maquina'];
+const LIM={rodillas:'Rodillas sensibles',lumbar:'Espalda baja',hombros:'Hombros sensibles',munecas:'Muñecas sensibles'};
+const LV=['Principiante','Intermedio','Avanzado'];
+const GOALS={
+  musculo:{n:'Ganar músculo',sets:3,reps:'8-12',rest:75,tip:'Sube el peso o las repeticiones poco a poco cada semana y duerme bien.'},
+  grasa:{n:'Perder grasa',sets:3,reps:'12-15',rest:45,tip:'Descansa poco entre series y suma caminatas en los días libres.'},
+  fuerza:{n:'Ganar fuerza',sets:4,reps:'5-6',rest:120,tip:'Prioriza la técnica y descansa lo suficiente entre series pesadas.'},
+  tonificar:{n:'Tonificar y resistencia',sets:3,reps:'12-15',rest:45,tip:'Mantén el ritmo constante y busca terminar cada serie con control.'},
+  salud:{n:'Salud general',sets:3,reps:'10-12',rest:60,tip:'La constancia pesa más que la intensidad: apunta a no faltar.'}
+};
+const DAYS=['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+const FRONT_ONLY=['pecho','biceps','abdomen','oblicuos','cuadriceps'];
+const BACK_ONLY=['espalda','lumbar','gluteos','isquios','triceps','trapecio'];
+const CORE=['abdomen','oblicuos','lumbar'];
+
+/* id, nombre, músculo principal, secundarios, equipo, nivel, modo (r=repeticiones, t=tiempo), evitar si..., pasos, consejo, vista */
+const X=(id,n,p,s,eq,lv,mode,avoid,steps,tip,view)=>({id,n,p,s,eq,lv,mode,avoid,steps:steps.split('|'),tip,view:view||(BACK_ONLY.includes(p)?'back':'front')});
+const EX=[
+X('flexiones','Flexiones','pecho',['triceps','hombros'],['cuerpo'],1,'r',['munecas'],"Apoya las manos un poco más abiertas que los hombros y forma una línea recta de cabeza a talones.|Baja el pecho hasta quedar a un puño del suelo, con los codos a unos 45° del cuerpo.|Empuja el suelo hasta estirar los brazos sin hundir la cadera.","Si aún no puedes, apoya las manos en una mesa firme para reducir la carga."),
+X('flexiones-elevadas','Flexiones con manos elevadas','pecho',['triceps'],['cuerpo'],1,'r',[],"Coloca las manos sobre un sillón o escalón estable, con el cuerpo en diagonal.|Baja el pecho hacia el borde manteniendo el abdomen firme.|Sube estirando los brazos sin encoger los hombros.","Cuanto más alto el apoyo, más fácil. Ve bajando la altura con las semanas."),
+X('press-suelo','Press de pecho en el suelo con mancuernas','pecho',['triceps','hombros'],['mancuernas'],1,'r',[],"Tumbado boca arriba, con las rodillas dobladas, sostén una mancuerna en cada mano a la altura del pecho.|Empuja hacia arriba hasta estirar los brazos sin bloquear los codos.|Baja despacio hasta que los codos rocen el suelo.","El suelo frena el recorrido y protege tus hombros."),
+X('press-mancuernas','Press de pecho con mancuernas en banco','pecho',['triceps','hombros'],['mancuernas','banco'],2,'r',['hombros'],"Acuéstate en el banco con los pies firmes y las mancuernas sobre el pecho.|Baja hasta sentir un estiramiento cómodo en el pecho, con los codos algo cerrados.|Empuja hacia arriba juntando ligeramente las mancuernas.","Mantén los omóplatos juntos y apoyados en el banco todo el tiempo."),
+X('press-banca','Press de banca con barra','pecho',['triceps','hombros'],['barra','banco','rack'],3,'r',['hombros'],"Agarra la barra un poco más abierto que los hombros y descuélgala con los brazos estirados.|Baja controlado hasta rozar la parte media del pecho.|Empuja en línea recta hacia arriba sin despegar la espalda del banco.","Pide a alguien que te asista cuando uses mucho peso."),
+X('aperturas','Aperturas con mancuernas','pecho',['hombros'],['mancuernas','banco'],2,'r',['hombros'],"Acostado en el banco, sostén las mancuernas arriba con los codos ligeramente doblados.|Abre los brazos hacia los lados como si abrazaras un barril.|Cierra juntando las manos sobre el pecho, sin chocar las pesas.","Usa menos peso que en el press: aquí manda el estiramiento."),
+X('cruce-poleas','Cruce de poleas','pecho',['hombros'],['polea'],2,'r',[],"Sujeta una manija en cada polea alta y da un paso al frente con el torso ligeramente inclinado.|Cierra los brazos hacia el centro con los codos suaves.|Vuelve despacio hasta sentir el estiramiento del pecho.","Imagina que juntas los codos, no las manos."),
+X('press-maquina-pecho','Press de pecho en máquina','pecho',['triceps'],['maquina'],1,'r',[],"Ajusta el asiento para que las manijas queden a la altura del pecho.|Empuja hasta estirar los brazos sin bloquear los codos.|Regresa sin soltar el peso de golpe.","Es ideal para aprender el movimiento con seguridad."),
+X('press-banda','Press de pecho con banda','pecho',['triceps','hombros'],['banda'],1,'r',[],"Pasa la banda por la espalda y sujeta los extremos a la altura del pecho.|Empuja al frente hasta estirar los brazos.|Vuelve despacio manteniendo la tensión.","Da un paso al frente para aumentar la resistencia."),
+X('press-militar','Press militar con mancuernas','hombros',['triceps'],['mancuernas'],2,'r',['hombros'],"De pie o sentado, lleva las mancuernas a la altura de las orejas con las palmas al frente.|Empuja hacia arriba hasta estirar los brazos sobre la cabeza.|Baja controlado hasta la altura de las orejas.","Aprieta el abdomen para no arquear la espalda."),
+X('elev-laterales','Elevaciones laterales','hombros',[],['mancuernas'],1,'r',[],"De pie, con una mancuerna en cada mano a los lados y los codos suaves.|Eleva los brazos hacia los lados hasta la altura de los hombros.|Baja despacio sin balancear el torso.","Usa poco peso: se trabaja mejor con control que con impulso."),
+X('elev-laterales-banda','Elevaciones laterales con banda','hombros',[],['banda'],1,'r',[],"Pisa la banda con ambos pies y sujeta los extremos.|Eleva los brazos hacia los lados hasta la altura de los hombros.|Baja lento resistiendo la banda.","Si la banda es muy suave, pisa más cerca de un extremo."),
+X('pajaros','Pájaros para hombro posterior','hombros',['trapecio'],['mancuernas'],2,'r',[],"Inclina el torso al frente con la espalda recta y las mancuernas colgando.|Abre los brazos hacia los lados apretando los omóplatos.|Baja sin perder la postura.","Mira al suelo para mantener el cuello alineado.",'back'),
+X('pike','Flexiones en V (pike)','hombros',['triceps'],['cuerpo'],2,'r',['hombros','munecas'],"Forma una V invertida con la cadera alta y las manos en el suelo.|Dobla los codos llevando la cabeza hacia el suelo, entre las manos.|Empuja hasta volver arriba.","Acerca los pies a las manos para que sea más difícil."),
+X('press-maquina-hombro','Press de hombros en máquina','hombros',['triceps'],['maquina'],1,'r',[],"Ajusta el asiento para que las manijas estén a la altura de los hombros.|Empuja hacia arriba sin encoger el cuello.|Baja de forma controlada.","Mantén la espalda apoyada en el respaldo."),
+X('curl-mancuernas','Curl de bíceps con mancuernas','biceps',['antebrazos'],['mancuernas'],1,'r',[],"De pie, con las mancuernas a los lados y las palmas al frente.|Dobla los codos subiendo las pesas hacia los hombros.|Baja despacio sin balancear el cuerpo.","Pega los codos al costado: si se mueven, baja el peso."),
+X('curl-martillo','Curl martillo','biceps',['antebrazos'],['mancuernas'],1,'r',[],"De pie, con las mancuernas a los lados y las palmas mirándose.|Sube una mancuerna a la vez sin girar la muñeca.|Baja con control y alterna.","Trabaja también el antebrazo, útil para el agarre."),
+X('curl-barra','Curl con barra','biceps',['antebrazos'],['barra'],2,'r',[],"Agarra la barra con las palmas arriba y el ancho de los hombros.|Sube la barra hacia el pecho sin mover los codos.|Baja lento hasta estirar los brazos.","Evita lanzarte hacia atrás para subir la barra."),
+X('curl-banda','Curl con banda','biceps',[],['banda'],1,'r',[],"Pisa la banda con los dos pies y toma los extremos con las palmas arriba.|Dobla los codos llevando las manos a los hombros.|Baja lento resistiendo la banda.","Perfecto para entrenar en casa o de viaje."),
+X('curl-polea','Curl en polea','biceps',[],['polea'],1,'r',[],"Frente a la polea baja, sujeta la barra o la cuerda con las palmas arriba.|Dobla los codos subiendo hasta el pecho.|Baja sintiendo la tensión continua.","La polea mantiene tensión durante todo el recorrido."),
+X('fondos-silla','Fondos de tríceps en silla','triceps',['pecho','hombros'],['cuerpo'],1,'r',['hombros','munecas'],"Apoya las manos en el borde de una silla firme, con las piernas estiradas al frente.|Dobla los codos hacia atrás bajando la cadera cerca de la silla.|Empuja hasta estirar los brazos.","Dobla las rodillas si necesitas hacerlo más fácil."),
+X('ext-triceps','Extensión de tríceps sobre la cabeza','triceps',[],['mancuernas'],1,'r',[],"Sostén una mancuerna con ambas manos detrás de la cabeza y los codos hacia arriba.|Estira los brazos hacia el techo.|Baja despacio detrás de la cabeza.","Mantén los codos cerrados y apuntando arriba."),
+X('patada-triceps','Patada de tríceps','triceps',[],['mancuernas'],1,'r',[],"Inclina el torso con la espalda recta y el codo pegado al costado.|Estira el brazo hacia atrás hasta que quede alineado con el cuerpo.|Vuelve despacio sin mover el codo.","El peso ligero basta: lo importante es la pausa arriba."),
+X('jalon-triceps','Extensión de tríceps en polea','triceps',[],['polea'],1,'r',[],"Frente a la polea alta, sujeta la barra o cuerda con los codos pegados al cuerpo.|Empuja hacia abajo hasta estirar los brazos.|Sube controlado hasta la altura del pecho.","No inclines el torso sobre el peso."),
+X('flex-diamante','Flexiones diamante','triceps',['pecho'],['cuerpo'],2,'r',['munecas','hombros'],"Junta las manos bajo el pecho formando un rombo con los dedos.|Baja el pecho hacia las manos con los codos cerca del cuerpo.|Empuja hasta estirar los brazos.","Hazlas con las rodillas apoyadas si pierdes la forma."),
+X('press-frances','Press francés con barra','triceps',[],['barra','banco'],3,'r',[],"Acostado, sostén la barra sobre el pecho con los brazos estirados.|Dobla solo los codos llevando la barra hacia la frente.|Estira de nuevo sin abrir los codos.","Usa un peso moderado para cuidar los codos."),
+X('remo-mancuerna','Remo con mancuerna a una mano','espalda',['biceps'],['mancuernas'],1,'r',[],"Apoya una mano y la rodilla del mismo lado en una silla o banco, con la espalda recta.|Lleva la mancuerna hacia la cadera, codo cerca del cuerpo.|Baja despacio hasta estirar el brazo.","Piensa en llevar el codo al bolsillo trasero."),
+X('dominadas','Dominadas','espalda',['biceps','antebrazos'],['dominadas'],3,'r',['hombros'],"Cuélgate de la barra con las palmas al frente y un agarre algo más ancho que los hombros.|Sube hasta que la barbilla pase la barra, llevando los codos hacia abajo.|Baja controlado hasta estirar los brazos.","Si todavía no logras una, trabaja con la versión asistida con banda."),
+X('dominadas-banda','Dominadas asistidas con banda','espalda',['biceps'],['dominadas','banda'],2,'r',[],"Ata la banda a la barra y apoya una rodilla o un pie en ella.|Sube hasta que la barbilla pase la barra.|Baja lento hasta estirar los brazos.","Con el tiempo usa una banda más fina."),
+X('jalon-pecho','Jalón al pecho','espalda',['biceps'],['polea'],1,'r',[],"Sentado, agarra la barra algo más ancha que los hombros.|Tira de la barra hacia la parte alta del pecho, llevando los codos hacia abajo.|Sube controlado hasta estirar los brazos.","No te inclines hacia atrás para ayudarte."),
+X('remo-banda','Remo con banda','espalda',['biceps'],['banda'],1,'r',[],"Sentado con las piernas estiradas, pasa la banda por los pies y sujeta los extremos.|Tira de las manos hacia el abdomen juntando los omóplatos.|Vuelve despacio sin encorvarte.","Mantén el pecho abierto durante todo el movimiento."),
+X('remo-barra','Remo con barra inclinado','espalda',['biceps','lumbar'],['barra'],3,'r',['lumbar'],"Inclina el torso con la espalda recta y las rodillas flexionadas, barra colgando.|Tira de la barra hacia el abdomen.|Baja sin perder la postura de la espalda.","Si sientes la zona lumbar, baja el peso o elige remo con apoyo."),
+X('remo-maquina','Remo sentado en máquina','espalda',['biceps'],['maquina'],1,'r',[],"Ajusta el asiento y apoya el pecho en el soporte.|Tira de las manijas hacia ti juntando los omóplatos.|Regresa despacio.","Un buen punto de partida para aprender a usar la espalda."),
+X('encogimientos','Encogimientos de hombros','trapecio',['antebrazos'],['mancuernas'],1,'r',[],"De pie, con una mancuerna en cada mano a los lados.|Sube los hombros hacia las orejas.|Baja lento sin girar los hombros.","Haz una pausa de un segundo arriba."),
+X('face-pull','Face pull con banda','trapecio',['hombros'],['banda'],1,'r',[],"Ancla la banda a la altura del rostro y sujeta los extremos.|Tira hacia la cara abriendo los codos.|Vuelve despacio.","Excelente para mejorar la postura de hombros.",'back'),
+X('superman','Superman','lumbar',['gluteos'],['cuerpo'],1,'r',[],"Acuéstate boca abajo con los brazos estirados al frente.|Levanta brazos y piernas a la vez unos centímetros.|Mantén un segundo y baja con control.","No eleves el cuello: mira al suelo."),
+X('bird-dog','Bird dog','lumbar',['gluteos','abdomen'],['cuerpo'],1,'r',[],"En cuatro apoyos, con la espalda neutra.|Estira un brazo y la pierna contraria hasta alinearlos con el tronco.|Vuelve y alterna lados.","Imagina que tienes un vaso de agua sobre la espalda."),
+X('hiperextension','Hiperextensión en banco','lumbar',['gluteos','isquios'],['maquina'],2,'r',['lumbar'],"Ajusta el soporte a la altura de la cadera y cruza los brazos en el pecho.|Baja el torso con la espalda recta.|Sube hasta formar una línea con las piernas, sin arquear de más.","Sube solo hasta alinear el cuerpo."),
+X('plancha','Plancha','abdomen',['hombros','lumbar'],['cuerpo'],1,'t',[],"Apoya antebrazos y puntas de los pies en el suelo, codos bajo los hombros.|Forma una línea recta, abdomen y glúteos firmes.|Respira de forma constante durante el tiempo indicado.","Si la cadera cae, descansa y empieza otra vez."),
+X('crunch','Crunch abdominal','abdomen',[],['cuerpo'],1,'r',[],"Acostado, con las rodillas dobladas y las manos junto a la cabeza.|Sube los hombros del suelo contrayendo el abdomen.|Baja sin relajar del todo.","No tires del cuello con las manos."),
+X('elev-piernas','Elevación de piernas tumbado','abdomen',['cuadriceps'],['cuerpo'],2,'r',['lumbar'],"Acostado, con la espalda baja pegada al suelo y las piernas estiradas.|Sube las piernas hasta formar un ángulo recto con el tronco.|Baja despacio sin tocar el suelo.","Si la espalda se despega, dobla las rodillas."),
+X('bicicleta','Bicicleta abdominal','abdomen',['oblicuos'],['cuerpo'],1,'r',[],"Acostado, con las manos junto a la cabeza y las piernas elevadas.|Lleva un codo hacia la rodilla contraria mientras estiras la otra pierna.|Alterna a un ritmo controlado.","Gira el torso, no solo los codos."),
+X('dead-bug','Dead bug','abdomen',['oblicuos'],['cuerpo'],1,'r',[],"Acostado, con brazos hacia el techo y rodillas dobladas a 90°.|Baja un brazo y la pierna contraria sin despegar la espalda baja.|Vuelve y alterna.","Es un gran ejercicio para aprender a estabilizar el tronco."),
+X('crunch-polea','Crunch en polea','abdomen',[],['polea'],2,'r',[],"De rodillas frente a la polea alta, sujeta la cuerda junto a la cabeza.|Enrolla el torso llevando los codos hacia las rodillas.|Vuelve despacio.","Mueve el torso, no la cadera."),
+X('plancha-lateral','Plancha lateral','oblicuos',['hombros'],['cuerpo'],1,'t',[],"Apoya un antebrazo en el suelo, con el codo bajo el hombro y las piernas estiradas.|Eleva la cadera para formar una línea recta.|Mantén el tiempo indicado y cambia de lado.","Apoya la rodilla de abajo si necesitas una versión más fácil."),
+X('giro-ruso','Giro ruso con mancuerna','oblicuos',['abdomen'],['mancuernas'],2,'r',['lumbar'],"Sentado, con el torso inclinado atrás y los pies apoyados o elevados.|Gira el torso llevando la mancuerna de un lado al otro.|Mantén la espalda larga durante todo el ejercicio.","Mueve el pecho completo, no solo los brazos."),
+X('lenador','Leñador con banda','oblicuos',['hombros','abdomen'],['banda'],2,'r',[],"Ancla la banda en alto y sujétala con ambas manos.|Tira en diagonal hacia la cadera contraria girando el tronco.|Vuelve despacio.","Pivota los pies para proteger las rodillas."),
+X('sentadilla','Sentadilla con peso corporal','cuadriceps',['gluteos'],['cuerpo'],1,'r',['rodillas'],"Separa los pies al ancho de los hombros, con las puntas ligeramente hacia fuera.|Baja la cadera hacia atrás y abajo, con el pecho erguido.|Empuja el suelo para subir.","Mantén las rodillas alineadas con los pies."),
+X('goblet','Sentadilla goblet con mancuerna','cuadriceps',['gluteos'],['mancuernas'],1,'r',['rodillas'],"Sostén una mancuerna contra el pecho con ambas manos.|Baja en cuclillas manteniendo el torso recto.|Sube empujando con los talones.","El peso al frente ayuda a mantener una buena postura."),
+X('goblet-kb','Sentadilla goblet con kettlebell','cuadriceps',['gluteos'],['kettlebell'],1,'r',['rodillas'],"Sostén la kettlebell por los lados del asa contra el pecho.|Baja en cuclillas con el torso recto.|Sube empujando con los talones.","Los codos pueden rozar el interior de las rodillas."),
+X('sentadilla-barra','Sentadilla con barra','cuadriceps',['gluteos','lumbar'],['barra','rack'],3,'r',['rodillas','lumbar'],"Coloca la barra sobre la parte alta de la espalda y da dos pasos atrás.|Baja con el torso firme hasta que los muslos queden paralelos al suelo.|Sube empujando el suelo con todo el pie.","Empieza con poco peso hasta dominar la técnica."),
+X('zancadas','Zancadas','cuadriceps',['gluteos'],['cuerpo'],1,'r',['rodillas'],"De pie, da un paso largo al frente.|Baja hasta que ambas rodillas estén cerca de 90°.|Empuja con la pierna delantera para volver y alterna.","Mantén el torso erguido y mira al frente."),
+X('bulgara','Sentadilla búlgara','cuadriceps',['gluteos'],['banco'],2,'r',['rodillas'],"Apoya el empeine de un pie en un banco detrás de ti.|Baja doblando la pierna de adelante, con el torso recto.|Sube empujando con el talón de adelante.","Ajusta la distancia para que la rodilla no pase mucho de la punta."),
+X('prensa','Prensa de piernas','cuadriceps',['gluteos'],['maquina'],1,'r',[],"Siéntate en la máquina con los pies a la altura de los hombros en la plataforma.|Dobla las rodillas hasta unos 90° controlando el peso.|Empuja sin bloquear las rodillas arriba.","No despegues la cadera del asiento."),
+X('ext-cuadriceps','Extensión de cuádriceps','cuadriceps',[],['maquina'],1,'r',['rodillas'],"Siéntate con la almohadilla sobre los tobillos.|Estira las piernas hasta alinearlas.|Baja despacio.","Haz una pausa breve arriba."),
+X('sentadilla-pared','Sentadilla en pared','cuadriceps',['gluteos'],['cuerpo'],1,'t',['rodillas'],"Apoya la espalda contra una pared y baja hasta que los muslos queden paralelos al suelo.|Mantén las rodillas sobre los tobillos.|Aguanta el tiempo indicado respirando con calma.","Sube un poco si sientes dolor en la rodilla."),
+X('rumano-mancuernas','Peso muerto rumano con mancuernas','isquios',['gluteos','lumbar'],['mancuernas'],2,'r',['lumbar'],"De pie, con las mancuernas frente a los muslos y las rodillas suaves.|Lleva la cadera hacia atrás bajando las pesas por las piernas.|Sube apretando los glúteos.","Siente el estiramiento en la parte de atrás del muslo."),
+X('rumano-barra','Peso muerto rumano con barra','isquios',['gluteos','lumbar'],['barra'],3,'r',['lumbar'],"Sostén la barra frente a los muslos con la espalda recta.|Empuja la cadera atrás y desliza la barra cerca de las piernas.|Sube extendiendo la cadera.","Mantén la barra pegada al cuerpo."),
+X('curl-femoral','Curl femoral en máquina','isquios',[],['maquina'],1,'r',[],"Ajusta la máquina para que la almohadilla quede sobre los tobillos.|Dobla las rodillas llevando los talones hacia los glúteos.|Vuelve de forma controlada.","Evita levantar la cadera del asiento."),
+X('curl-deslizante','Curl femoral con toalla','isquios',['gluteos'],['cuerpo'],2,'r',[],"Acostado boca arriba, con los talones sobre una toalla en un suelo liso.|Eleva la cadera y desliza los talones hacia ti.|Estira lentamente las piernas.","Mantén la cadera arriba durante todo el movimiento."),
+X('puente-gluteo','Puente de glúteos','gluteos',['isquios'],['cuerpo'],1,'r',[],"Acostado, con las rodillas dobladas y los pies apoyados.|Sube la cadera apretando los glúteos.|Baja sin apoyar del todo.","Haz una pausa de un segundo arriba."),
+X('hip-thrust','Empuje de cadera con banco','gluteos',['isquios'],['banco','mancuernas'],2,'r',[],"Apoya la parte alta de la espalda en el banco con la mancuerna sobre la cadera.|Sube la cadera hasta alinear tronco y muslos.|Baja controlado.","Mantén la mirada al frente para no arquear la zona lumbar."),
+X('patada-gluteo','Patada de glúteo con banda','gluteos',['isquios'],['banda'],1,'r',[],"En cuatro apoyos, coloca la banda alrededor de los pies.|Estira una pierna hacia atrás apretando el glúteo.|Vuelve despacio.","No gires la cadera al subir la pierna."),
+X('sumo-kb','Sentadilla sumo con kettlebell','gluteos',['cuadriceps'],['kettlebell'],1,'r',[],"Separa los pies más que los hombros y sostén la kettlebell con ambas manos.|Baja con el torso erguido y las rodillas hacia fuera.|Sube apretando los glúteos.","Abre las rodillas siguiendo la dirección de los pies."),
+X('swing-kb','Balanceo con kettlebell','gluteos',['isquios','lumbar'],['kettlebell'],2,'r',['lumbar'],"Con los pies al ancho de los hombros, lleva la kettlebell hacia atrás entre las piernas.|Empuja la cadera al frente para lanzar la pesa a la altura del pecho.|Deja que baje y repite con fluidez.","El impulso viene de la cadera, no de los brazos."),
+X('pasos-banda','Pasos laterales con banda','gluteos',[],['banda'],1,'r',[],"Coloca la banda sobre las rodillas o los tobillos y flexiona un poco las rodillas.|Da pasos laterales manteniendo la tensión.|Cambia de dirección tras cada serie.","Mantén los pies paralelos."),
+X('talones','Elevación de talones de pie','pantorrillas',[],['cuerpo'],1,'r',[],"De pie, con los pies al ancho de la cadera y una mano en la pared.|Sube sobre las puntas lo más alto posible.|Baja lento hasta el suelo.","Pausa un segundo arriba."),
+X('talones-mancuernas','Elevación de talones con mancuernas','pantorrillas',[],['mancuernas'],1,'r',[],"De pie, con una mancuerna en cada mano a los lados.|Sube sobre las puntas.|Baja controlado.","Si sobra equilibrio, hazlo sobre un escalón."),
+X('talones-maquina','Elevación de talones en máquina','pantorrillas',[],['maquina'],1,'r',[],"Coloca las puntas en la plataforma y los hombros bajo las almohadillas.|Sube lo más alto posible.|Baja hasta sentir el estiramiento.","Evita rebotar abajo."),
+X('curl-muneca','Curl de muñeca','antebrazos',[],['mancuernas'],1,'r',['munecas'],"Sentado, apoya el antebrazo sobre el muslo con la palma hacia arriba.|Dobla la muñeca subiendo la mancuerna.|Baja con control.","Usa poco peso y movimientos lentos."),
+X('colgado','Colgarse de la barra','antebrazos',['espalda'],['dominadas'],1,'t',['hombros'],"Cuélgate de la barra con las palmas al frente.|Mantén los hombros activos, sin dejarlos subir hacia las orejas.|Aguanta el tiempo indicado.","Si es muy duro, apoya los pies en una silla."),
+X('granjero','Caminata del granjero','antebrazos',['trapecio'],['mancuernas'],1,'t',[],"Sostén una mancuerna pesada en cada mano a los lados.|Camina con pasos cortos, el pecho erguido y los hombros bajos.|Haz el recorrido durante el tiempo indicado.","Aprieta fuerte las pesas: el agarre también se entrena.",'front'),
+X('salto-cuerda','Salto de cuerda','pantorrillas',['cuadriceps','hombros'],['cuerda'],1,'t',['rodillas'],"Sostén la cuerda con las manos a la altura de la cadera y los codos cerca del cuerpo.|Gira la cuerda con las muñecas y salta apenas unos centímetros sobre la punta de los pies.|Aterriza suave, con las rodillas ligeramente flexionadas, y mantén un ritmo constante.","Si te cuesta, practica el salto sin cuerda hasta tomar el ritmo."),
+X('saltos-tijera','Saltos de tijera','pantorrillas',['hombros','cuadriceps'],['cuerpo'],1,'t',['rodillas'],"De pie, con los pies juntos y los brazos a los lados.|Salta abriendo las piernas y sube los brazos por encima de la cabeza.|Vuelve a la posición inicial con otro salto y repite a ritmo constante.","Para bajar el impacto, haz la versión sin salto: da pasos laterales."),
+X('escaladores','Escaladores','abdomen',['hombros','cuadriceps'],['cuerpo'],1,'t',['munecas'],"Apóyate en las manos como al inicio de una flexión, con el cuerpo recto.|Lleva una rodilla hacia el pecho y vuelve.|Alterna las piernas a buen ritmo sin subir la cadera.","Si es muy exigente, apoya las manos en una mesa firme."),
+X('rueda-rodillas','Rueda abdominal de rodillas','abdomen',['hombros','lumbar'],['rueda'],2,'r',['lumbar','hombros'],"De rodillas sobre una colchoneta, sujeta la rueda con ambas manos bajo los hombros.|Rueda hacia delante hasta donde mantengas la espalda recta.|Contrae el abdomen y vuelve a la posición inicial.","Recorre solo la distancia que controles y gana rango poco a poco."),
+X('rueda-pie','Rueda abdominal de pie','abdomen',['hombros','lumbar'],['rueda'],3,'r',['lumbar','hombros'],"De pie, inclina el torso al frente y apoya la rueda en el suelo.|Rueda hacia delante hasta quedar casi paralelo al suelo, sin hundir la espalda baja.|Vuelve usando el abdomen, no la cadera.","Es un ejercicio avanzado: domina antes la versión de rodillas."),
+X('crunch-pelota','Crunch sobre pelota suiza','abdomen',[],['pelota'],1,'r',[],"Apoya la zona lumbar en la pelota con los pies firmes en el suelo y las manos junto a la cabeza.|Sube el torso contrayendo el abdomen.|Baja despacio hasta estirar el abdomen sobre la pelota.","Cuanto más cerca de los pies pongas la pelota, más fácil."),
+X('plancha-pelota','Plancha sobre pelota suiza','abdomen',['hombros'],['pelota'],2,'t',[],"Apoya los antebrazos sobre la pelota y estira las piernas atrás.|Mantén el cuerpo en línea recta, con abdomen y glúteos firmes.|Aguanta el tiempo indicado respirando con calma.","Si tiembla mucho, separa un poco los pies para ganar estabilidad."),
+X('hiper-pelota','Hiperextensión sobre pelota suiza','lumbar',['gluteos'],['pelota'],1,'r',['lumbar'],"Apoya el abdomen sobre la pelota con los pies firmes y las manos junto a la cabeza.|Sube el torso hasta alinearlo con las piernas.|Baja despacio sin dejar caer el cuello.","Sube solo hasta formar una línea recta, sin arquear de más.",'back'),
+X('curl-fem-pelota','Curl femoral con pelota suiza','isquios',['gluteos'],['pelota'],2,'r',[],"Acostado boca arriba, apoya los talones sobre la pelota y eleva la cadera.|Dobla las rodillas acercando la pelota hacia los glúteos.|Estira despacio las piernas sin bajar la cadera.","Mantén la cadera alta durante toda la serie."),
+X('remo-anillas','Remo con anillas','espalda',['biceps'],['anillas'],1,'r',[],"Sujeta las anillas con las palmas mirándose e inclínate hacia atrás con el cuerpo recto.|Tira del pecho hacia las manos juntando los omóplatos.|Baja controlado hasta estirar los brazos.","Cuanto más horizontal el cuerpo, más difícil. Ajusta el ángulo con los pies."),
+X('flex-anillas','Flexiones con anillas','pecho',['triceps','hombros'],['anillas'],3,'r',['hombros','munecas'],"Apoya las manos en las anillas bajas y adopta la posición de flexión.|Baja el pecho entre las manos con los codos cerca del cuerpo.|Empuja hasta estirar los brazos manteniendo las anillas estables.","La inestabilidad exige más: empieza con pocas repeticiones."),
+X('curl-anillas','Curl de bíceps con anillas','biceps',['antebrazos'],['anillas'],2,'r',[],"Sujeta las anillas con las palmas hacia ti e inclínate hacia atrás.|Dobla los codos llevando las manos hacia la frente.|Baja controlado hasta estirar los brazos.","Mantén los codos a la altura de los hombros."),
+X('fondos-paralelas','Fondos en paralelas','triceps',['pecho','hombros'],['paralelas'],3,'r',['hombros'],"Apóyate sobre las barras con los brazos estirados y el torso erguido.|Baja doblando los codos hasta unos 90°.|Empuja hasta estirar los brazos sin encoger los hombros.","Inclina el torso al frente si quieres trabajar más el pecho."),
+X('rodillas-paralelas','Elevación de rodillas en paralelas','abdomen',['antebrazos'],['paralelas'],2,'r',['lumbar'],"Apoya los antebrazos en las barras con la espalda pegada al respaldo.|Sube las rodillas hacia el pecho.|Baja despacio sin balancearte.","Evita el impulso: sube con el abdomen."),
+X('curl-barraz','Curl con barra Z','biceps',['antebrazos'],['barraz'],2,'r',[],"Sujeta la barra Z por las partes curvas con las palmas hacia arriba.|Sube la barra hacia el pecho sin mover los codos.|Baja despacio hasta estirar los brazos.","La barra Z alivia las muñecas frente a la barra recta."),
+X('frances-barraz','Press francés con barra Z','triceps',[],['barraz','banco'],2,'r',[],"Acostado en el banco, sostén la barra Z sobre el pecho con los brazos estirados.|Dobla solo los codos llevando la barra hacia la frente.|Estira de nuevo sin abrir los codos.","Usa un peso moderado para cuidar los codos."),
+X('giro-balon','Giro ruso con balón medicinal','oblicuos',['abdomen'],['balon'],1,'r',['lumbar'],"Sentado, con el torso inclinado atrás y el balón entre las manos.|Gira el torso llevando el balón de un lado al otro.|Mantén la espalda larga durante todo el ejercicio.","Eleva los pies para hacerlo más difícil."),
+X('slam-balon','Lanzamiento de balón al suelo','abdomen',['hombros','espalda'],['balon'],2,'r',['lumbar'],"De pie, sostén el balón sobre la cabeza con los brazos estirados.|Lánzalo con fuerza al suelo flexionando el torso.|Recógelo y vuelve a subirlo para repetir.","Usa un balón que no rebote y colócate lejos de objetos frágiles."),
+X('step-up','Subida al step','cuadriceps',['gluteos'],['step'],1,'r',['rodillas'],"De pie frente al step, apoya un pie completo sobre él.|Empuja con esa pierna hasta quedar de pie sobre el step.|Baja controlado y alterna las piernas.","Empuja con el talón del pie que sube, no con el que queda atrás."),
+X('salto-cajon','Salto al cajón','cuadriceps',['gluteos','pantorrillas'],['step'],3,'r',['rodillas'],"Frente a un cajón estable, flexiona caderas y rodillas.|Salta y aterriza con los dos pies sobre el cajón.|Baja caminando, no saltando, y repite.","Escoge una altura que te permita aterrizar suave."),
+X('talones-step','Elevación de talones en escalón','pantorrillas',[],['step'],1,'r',[],"Apoya la parte delantera de los pies en el borde del step, con los talones en el aire.|Baja los talones hasta sentir el estiramiento.|Sube lo más alto posible sobre las puntas.","Sujétate de una pared para mantener el equilibrio."),
+X('remo-polea','Remo en polea baja','espalda',['biceps'],['polea'],1,'r',[],"Sentado frente a la polea baja, toma la manija con los brazos estirados.|Tira hacia el abdomen juntando los omóplatos.|Vuelve lento sin encorvarte.","Mantén el pecho abierto y las rodillas ligeramente flexionadas."),
+X('elev-lat-polea','Elevación lateral en polea','hombros',[],['polea'],2,'r',[],"De pie junto a la polea baja, toma la manija con la mano contraria.|Eleva el brazo hacia el lado hasta la altura del hombro.|Baja controlado, sintiendo la tensión continua.","Da un paso lateral para que el cable no roce tu cuerpo."),
+X('patada-polea','Patada de glúteo en polea','gluteos',['isquios'],['polea'],2,'r',[],"Coloca la tobillera en un tobillo y apóyate en la máquina.|Estira la pierna hacia atrás apretando el glúteo.|Vuelve despacio sin arquear la espalda.","No balancees el torso para subir más la pierna."),
+X('face-pull-polea','Face pull en polea','trapecio',['hombros'],['polea'],1,'r',[],"Ajusta la polea a la altura del rostro y sujeta la cuerda con ambas manos.|Tira hacia la cara abriendo los codos hacia los lados.|Vuelve despacio.","Excelente para la postura de los hombros.",'back'),
+X('press-inclinado','Press inclinado con mancuernas','pecho',['hombros','triceps'],['mancuernas','banco'],2,'r',['hombros'],"Inclina el respaldo del banco unos 30° y siéntate con las mancuernas a la altura del pecho.|Empuja hacia arriba hasta estirar los brazos.|Baja controlado sintiendo el estiramiento del pecho.","Un ángulo bajo trabaja más el pecho; uno alto, más el hombro."),
+X('dominadas-supinas','Dominadas con agarre supino','espalda',['biceps'],['dominadas'],3,'r',['hombros'],"Cuélgate de la barra con las palmas hacia ti y las manos al ancho de los hombros.|Sube hasta que la barbilla pase la barra.|Baja controlado hasta estirar los brazos.","Este agarre exige más a los bíceps."),
+X('elev-piernas-colgado','Elevación de piernas colgado','abdomen',['antebrazos'],['dominadas'],3,'r',['lumbar','hombros'],"Cuélgate de la barra con los brazos estirados.|Sube las piernas rectas o dobladas hacia el pecho.|Baja sin balancearte.","Empieza con las rodillas dobladas."),
+X('pec-deck','Aperturas en máquina','pecho',['hombros'],['maquina'],1,'r',[],"Ajusta el asiento para que las manijas queden a la altura del pecho.|Cierra los brazos hacia el centro con los codos suaves.|Abre despacio sintiendo el estiramiento.","Mantén la espalda apoyada en el respaldo."),
+X('pec-deck-inverso','Aperturas inversas en máquina','hombros',['trapecio'],['maquina'],1,'r',[],"Siéntate de frente al respaldo y sujeta las manijas.|Abre los brazos hacia atrás juntando los omóplatos.|Vuelve despacio.","Usa poco peso y mantén el cuello relajado.",'back'),
+X('abductores','Abducción de cadera en máquina','gluteos',[],['maquina'],1,'r',[],"Siéntate con las almohadillas por fuera de los muslos.|Abre las piernas contra la resistencia.|Cierra despacio sin soltar el peso.","Inclina un poco el torso al frente para activar más el glúteo."),
+X('muerto-barra','Peso muerto con barra','lumbar',['gluteos','isquios','espalda'],['barra'],3,'r',['lumbar'],"Con la barra frente a las espinillas y los pies al ancho de la cadera, agárrala con la espalda recta.|Empuja el suelo y sube la barra pegada a las piernas hasta quedar de pie.|Baja con control llevando la cadera atrás.","Mantén la barra pegada al cuerpo todo el recorrido.",'back'),
+X('hip-thrust-barra','Empuje de cadera con barra','gluteos',['isquios'],['barra','banco'],3,'r',[],"Apoya la parte alta de la espalda en el banco con la barra sobre la cadera.|Sube la cadera hasta alinear tronco y muslos.|Baja controlado sin apoyar del todo.","Usa una almohadilla en la barra para mayor comodidad."),
+X('zancadas-mancuernas','Zancadas con mancuernas','cuadriceps',['gluteos'],['mancuernas'],2,'r',['rodillas'],"De pie con una mancuerna en cada mano, da un paso largo al frente.|Baja hasta que ambas rodillas formen unos 90°.|Empuja con la pierna delantera para volver y alterna.","Mantén el torso erguido."),
+X('arnold','Press Arnold','hombros',['triceps'],['mancuernas'],2,'r',['hombros'],"Sentado, empieza con las mancuernas frente al pecho y las palmas hacia ti.|Empuja hacia arriba girando las palmas hacia el frente.|Baja invirtiendo el giro.","Usa poco peso hasta dominar el giro."),
+X('gemelos-prensa','Elevación de talones en prensa','pantorrillas',[],['maquina'],1,'r',[],"Siéntate en la prensa y apoya solo la punta de los pies en la plataforma.|Empuja con las puntas estirando los tobillos.|Vuelve despacio hasta sentir el estiramiento.","No bloquees las rodillas."),
+X('v-ups','Abdominales en V','abdomen',['cuadriceps'],['cuerpo'],3,'r',['lumbar'],"Acostado boca arriba, con brazos y piernas estirados.|Sube a la vez el torso y las piernas rectas hasta tocar los pies con las manos.|Baja con control sin dejar caer las piernas.","Si es muy duro, dobla las rodillas al subir."),
+X('toca-talones','Toca talones alterno','oblicuos',['abdomen'],['cuerpo'],1,'r',[],"Acostado, con las rodillas dobladas y los pies apoyados.|Inclina el torso hacia un lado para tocar el talón con la mano.|Vuelve al centro y alterna de lado.","Mantén los hombros cerca del suelo y mueve el costado."),
+X('crunch-inverso','Crunch inverso','abdomen',[],['cuerpo'],1,'r',['lumbar'],"Acostado, con las manos junto al cuerpo y las rodillas dobladas en el aire.|Lleva las rodillas hacia el pecho elevando un poco la cadera.|Baja despacio sin apoyar del todo los pies.","Evita balancearte: sube con el abdomen bajo."),
+X('plancha-toque-hombro','Plancha con toque de hombro','abdomen',['hombros','oblicuos'],['cuerpo'],2,'r',['munecas'],"Colócate en plancha alta con los pies algo separados.|Toca el hombro contrario con una mano sin girar la cadera.|Regresa la mano y alterna.","Separa más los pies para ganar estabilidad."),
+X('crunch-piernas-elevadas','Crunch con piernas elevadas','abdomen',[],['cuerpo'],1,'r',[],"Acostado, con las piernas elevadas y dobladas a 90°.|Sube los hombros llevando las manos hacia las rodillas.|Baja controlado sin apoyar la cabeza con fuerza.","Mantén la mirada al techo para cuidar el cuello."),
+X('tijeras-flutter','Tijeras (flutter kicks)','abdomen',['cuadriceps'],['cuerpo'],1,'t',['lumbar'],"Acostado, con las manos bajo la cadera y las piernas estiradas.|Eleva las piernas unos centímetros del suelo.|Alterna pequeños movimientos de arriba abajo durante el tiempo indicado.","Si la espalda se arquea, sube un poco más las piernas."),
+X('hollow-hold','Posición hueca (hollow hold)','abdomen',[],['cuerpo'],2,'t',['lumbar'],"Acostado boca arriba, con los brazos estirados sobre la cabeza.|Eleva hombros y piernas del suelo, con la espalda baja pegada al suelo.|Mantén la posición el tiempo indicado.","Dobla las rodillas si no logras mantener la espalda pegada."),
+X('plancha-manos','Plancha alta','abdomen',['hombros'],['cuerpo'],1,'t',['munecas'],"Apoya las manos bajo los hombros y estira las piernas atrás.|Forma una línea recta, con abdomen y glúteos firmes.|Mantén la posición respirando con calma.","Apoya las rodillas si te cuesta mantener la línea."),
+X('pallof','Press Pallof con banda','abdomen',['oblicuos'],['banda'],1,'r',[],"Ancla la banda a un punto firme a la altura del pecho y colócate de lado.|Lleva las manos al pecho y estira los brazos al frente sin girar el torso.|Vuelve despacio y cambia de lado tras la serie.","El reto es no dejarte girar por la banda."),
+X('lenador-mancuerna','Leñador con mancuerna','oblicuos',['hombros','abdomen'],['mancuernas'],1,'r',[],"De pie, sostén una mancuerna con ambas manos junto a una cadera.|Súbela en diagonal por encima del hombro contrario girando el tronco.|Baja de forma controlada y repite al otro lado.","Pivota los pies para proteger las rodillas."),
+X('flexion-lateral','Flexión lateral con mancuerna','oblicuos',[],['mancuernas'],1,'r',[],"De pie, con una mancuerna en una mano y la otra mano en la nuca.|Inclina el torso hacia el lado de la mancuerna.|Sube usando el costado contrario y alterna.","Usa un peso moderado y evita rotar el cuerpo."),
+X('jalon-estrecho','Jalón al pecho con agarre estrecho','espalda',['biceps'],['polea'],1,'r',[],"Sentado en la polea alta, toma la manija en V con los brazos estirados.|Tira hacia el pecho llevando los codos hacia las costillas.|Sube controlado sin soltar la tensión.","Saca pecho al tirar, sin encorvarte."),
+X('remo-inclinado-mancuernas','Remo inclinado con dos mancuernas','espalda',['biceps','lumbar'],['mancuernas'],2,'r',['lumbar'],"Con las rodillas flexionadas, inclina el torso al frente con la espalda recta.|Tira de ambas mancuernas hacia la cadera.|Baja controlado sin redondear la espalda.","Mira al suelo para mantener el cuello alineado."),
+X('pullover','Pullover con mancuerna','espalda',['pecho','triceps'],['mancuernas','banco'],2,'r',['hombros'],"Acostado en el banco, sostén una mancuerna con ambas manos sobre el pecho.|Baja los brazos hacia atrás de la cabeza con los codos suaves.|Regresa la mancuerna sobre el pecho.","Baja solo hasta donde sientas el estiramiento sin molestias en el hombro."),
+X('remo-kettlebell','Remo con kettlebell','espalda',['biceps'],['kettlebell'],1,'r',[],"Inclina el torso con la espalda recta y la kettlebell colgando de una mano.|Tira hacia la cadera llevando el codo hacia atrás.|Baja despacio y cambia de lado.","Apoya la otra mano en una silla para descansar la espalda."),
+X('encogimientos-barra','Encogimientos con barra','trapecio',['antebrazos'],['barra'],2,'r',[],"De pie, sujeta la barra frente a los muslos con las manos al ancho de los hombros.|Sube los hombros hacia las orejas.|Baja lento sin girar los hombros.","Mantén los brazos estirados todo el tiempo."),
+X('muerto-mancuernas','Peso muerto con mancuernas','lumbar',['gluteos','isquios','espalda'],['mancuernas'],2,'r',['lumbar'],"De pie, con las mancuernas a los lados de los muslos y la espalda recta.|Baja la cadera y el torso con las pesas cerca de las piernas.|Sube empujando el suelo hasta quedar de pie.","Mantén el pecho abierto y la mirada al frente.",'back'),
+X('remo-polea-uni','Remo a una mano en polea','espalda',['biceps'],['polea'],2,'r',[],"Sujeta la manija con una mano frente a la polea baja.|Tira hacia la cadera con el codo pegado al cuerpo.|Vuelve despacio sin girar el torso.","Cambia de mano al terminar la serie."),
+X('jalon-banda','Jalón con banda desde arriba','espalda',['biceps'],['banda'],1,'r',[],"Ancla la banda en un punto alto y arrodíllate frente a ella.|Tira de los extremos hacia el pecho llevando los codos hacia abajo.|Sube despacio.","Ideal para entrenar espalda en casa."),
+X('buenos-dias','Buenos días con barra','lumbar',['isquios','gluteos'],['barra','rack'],3,'r',['lumbar'],"Coloca la barra sobre la espalda alta con los pies al ancho de la cadera.|Lleva la cadera atrás inclinando el torso con la espalda recta.|Sube apretando los glúteos.","Usa poco peso: es un ejercicio exigente para la zona lumbar.",'back'),
+X('remo-pecho-apoyado','Remo con pecho apoyado en banco','espalda',['biceps'],['mancuernas','banco'],1,'r',[],"Apoya el pecho en un banco inclinado con una mancuerna en cada mano.|Tira de las mancuernas hacia las costillas juntando los omóplatos.|Baja despacio hasta estirar los brazos.","Protege la zona lumbar porque el banco sostiene el torso."),
+X('flex-pies-elevados','Flexiones con pies elevados','pecho',['hombros','triceps'],['cuerpo'],2,'r',['munecas','hombros'],"Apoya los pies sobre una silla firme y las manos en el suelo.|Baja el pecho manteniendo el cuerpo recto.|Empuja hasta estirar los brazos.","Cuanto más altos los pies, más trabajo para el pecho alto."),
+X('flex-rodillas','Flexiones con rodillas apoyadas','pecho',['triceps','hombros'],['cuerpo'],1,'r',[],"Apoya las manos y las rodillas en el suelo, con el cuerpo recto desde rodillas a cabeza.|Baja el pecho hasta quedar cerca del suelo.|Empuja hasta estirar los brazos.","Es el primer paso para llegar a la flexión completa."),
+X('flex-archer','Flexiones arquero','pecho',['triceps','hombros'],['cuerpo'],3,'r',['munecas','hombros'],"Colócate en flexión con las manos muy abiertas.|Baja hacia un lado manteniendo el otro brazo estirado.|Empuja de vuelta al centro y alterna.","Baja solo hasta donde controles el movimiento."),
+X('aperturas-banda','Aperturas con banda','pecho',['hombros'],['banda'],1,'r',[],"Pasa la banda por la espalda y sujeta los extremos con los brazos abiertos.|Junta las manos frente al pecho con los codos suaves.|Abre despacio manteniendo la tensión.","Da un paso al frente para aumentar la resistencia."),
+X('press-inclinado-barra','Press inclinado con barra','pecho',['hombros','triceps'],['barra','banco','rack'],3,'r',['hombros'],"En un banco inclinado, agarra la barra un poco más abierto que los hombros.|Baja hasta la parte alta del pecho.|Empuja hacia arriba hasta estirar los brazos.","Pide ayuda con un compañero cuando uses mucho peso."),
+X('aperturas-inclinadas','Aperturas inclinadas con mancuernas','pecho',['hombros'],['mancuernas','banco'],2,'r',['hombros'],"En un banco inclinado, sostén las mancuernas arriba con los codos suaves.|Abre los brazos hacia los lados como un abrazo.|Cierra juntando las mancuernas sobre el pecho.","Usa un peso ligero para cuidar los hombros."),
+X('press-neutro','Press de pecho con agarre neutro','pecho',['triceps'],['mancuernas','banco'],2,'r',[],"Acostado en el banco, sostén las mancuernas con las palmas mirándose.|Empuja hacia arriba hasta estirar los brazos.|Baja despacio con los codos cerca del cuerpo.","El agarre neutro suele ser más cómodo para los hombros."),
+X('elev-frontales','Elevaciones frontales con mancuernas','hombros',[],['mancuernas'],1,'r',[],"De pie, con una mancuerna en cada mano frente a los muslos.|Eleva un brazo al frente hasta la altura del hombro.|Baja lento y alterna.","No uses impulso del cuerpo."),
+X('remo-menton','Remo al mentón con barra Z','hombros',['trapecio'],['barraz'],2,'r',['hombros'],"Sujeta la barra Z frente a los muslos con las manos algo abiertas.|Sube la barra pegada al cuerpo hasta el pecho, con los codos hacia arriba.|Baja despacio.","Sube solo hasta donde no moleste el hombro."),
+X('press-militar-barra','Press militar con barra','hombros',['triceps'],['barra','rack'],3,'r',['hombros','lumbar'],"Apoya la barra sobre la parte alta del pecho con las manos al ancho de los hombros.|Empuja hacia arriba hasta estirar los brazos sobre la cabeza.|Baja controlado hasta el pecho.","Aprieta abdomen y glúteos para no arquear la espalda."),
+X('press-hombro-banda','Press de hombros con banda','hombros',['triceps'],['banda'],1,'r',[],"Pisa la banda y sujeta los extremos a la altura de los hombros.|Empuja hacia arriba hasta estirar los brazos.|Baja despacio.","Buena opción para entrenar hombros en casa."),
+X('pajaros-banda','Pájaros con banda','hombros',['trapecio'],['banda'],1,'r',[],"Sujeta la banda con los brazos al frente a la altura del pecho.|Abre los brazos hacia los lados juntando los omóplatos.|Vuelve despacio.","Mantén los codos casi estirados.",'back'),
+X('press-kettlebell','Press de hombros con kettlebell','hombros',['triceps'],['kettlebell'],2,'r',['hombros'],"Sostén la kettlebell a la altura del hombro con la muñeca recta.|Empuja hacia arriba hasta estirar el brazo.|Baja controlado y cambia de lado.","Aprieta el abdomen para estabilizar el torso."),
+X('curl-concentrado','Curl concentrado','biceps',[],['mancuernas'],1,'r',[],"Sentado, apoya el codo en el interior del muslo con la mancuerna colgando.|Sube la mancuerna hacia el hombro.|Baja despacio sin balancear.","Piensa en apretar el bíceps arriba."),
+X('curl-inclinado','Curl inclinado con mancuernas','biceps',[],['mancuernas','banco'],2,'r',[],"Siéntate en un banco inclinado con los brazos colgando atrás del cuerpo.|Sube las mancuernas doblando los codos.|Baja lento hasta sentir el estiramiento.","Mantén los codos quietos junto al torso."),
+X('curl-predicador','Curl en máquina predicador','biceps',[],['maquina'],1,'r',[],"Ajusta el asiento y apoya los brazos en la almohadilla.|Sube la manija hacia los hombros.|Baja despacio sin soltar la tensión.","No levantes los codos de la almohadilla."),
+X('press-cerrado','Press de banca con agarre cerrado','triceps',['pecho','hombros'],['barra','banco','rack'],3,'r',['hombros','munecas'],"Acostado, agarra la barra con las manos al ancho de los hombros.|Baja la barra hacia el pecho con los codos cerca del cuerpo.|Empuja hasta estirar los brazos.","No cierres demasiado las manos para cuidar las muñecas."),
+X('ext-triceps-banda','Extensión de tríceps con banda','triceps',[],['banda'],1,'r',[],"Ancla la banda en un punto alto y sujeta los extremos con los codos pegados.|Empuja hacia abajo hasta estirar los brazos.|Sube controlado.","Mantén los codos fijos junto al cuerpo."),
+X('frances-mancuernas','Press francés con mancuernas','triceps',[],['mancuernas','banco'],2,'r',[],"Acostado en el banco, sostén las mancuernas sobre el pecho con las palmas mirándose.|Dobla los codos llevando las pesas junto a la cabeza.|Estira sin abrir los codos.","Usa un peso moderado para cuidar los codos."),
+X('ext-triceps-cuerda','Extensión de tríceps con cuerda sobre la cabeza','triceps',[],['polea'],2,'r',[],"De espaldas a la polea alta, sujeta la cuerda detrás de la cabeza.|Estira los brazos hacia delante y arriba.|Vuelve despacio.","Mantén los codos cerrados y quietos."),
+X('curl-muneca-inverso','Curl de muñeca invertido','antebrazos',[],['mancuernas'],1,'r',['munecas'],"Sentado, apoya el antebrazo sobre el muslo con la palma hacia abajo.|Sube la mano doblando la muñeca hacia arriba.|Baja con control.","Usa poco peso."),
+X('curl-muneca-barra','Curl de muñeca con barra','antebrazos',[],['barra'],1,'r',['munecas'],"Sentado, apoya los antebrazos en los muslos con las palmas hacia arriba.|Deja caer la barra hasta las puntas de los dedos y súbela doblando las muñecas.|Baja lento.","Carga ligera y repeticiones controladas."),
+X('rotacion-antebrazo','Rotación de antebrazo con mancuerna','antebrazos',[],['mancuernas'],1,'r',['munecas'],"Sentado, apoya el antebrazo y sostén la mancuerna por un extremo.|Gira la muñeca hasta que la palma mire arriba y luego abajo.|Repite despacio.","Hazlo sin mover el codo."),
+X('curl-inverso-z','Curl inverso con barra Z','antebrazos',['biceps'],['barraz'],2,'r',[],"Sujeta la barra Z con las palmas hacia abajo.|Sube la barra hacia el pecho sin mover los codos.|Baja despacio.","Mantén las muñecas rectas."),
+X('talones-una-pierna','Elevación de talones a una pierna','pantorrillas',[],['cuerpo'],2,'r',[],"De pie sobre una pierna, apoyando una mano en la pared.|Sube sobre la punta del pie lo más alto posible.|Baja despacio y cambia de pierna.","Si tienes un escalón, trabaja con el talón fuera del borde."),
+X('talones-sentado','Elevación de talones sentado en máquina','pantorrillas',[],['maquina'],1,'r',[],"Siéntate con las almohadillas sobre los muslos y las puntas en la plataforma.|Sube los talones lo máximo posible.|Baja despacio hasta estirar la pantorrilla.","Trabaja más el músculo profundo de la pantorrilla."),
+X('caminata-puntas','Caminata sobre las puntas','pantorrillas',[],['cuerpo'],1,'t',[],"De pie, sube sobre las puntas de los pies.|Camina con pasos cortos manteniendo los talones elevados.|Sigue durante el tiempo indicado.","Mantén el abdomen firme para no balancearte."),
+X('pogo','Saltos pequeños sobre las puntas','pantorrillas',[],['cuerpo'],2,'t',['rodillas'],"De pie, con las rodillas casi estiradas.|Salta apenas unos centímetros usando solo los tobillos.|Aterriza suave y repite a ritmo constante.","Evita hacerlo con calzado muy blando."),
+X('sentadilla-salto','Sentadilla con salto','cuadriceps',['gluteos','pantorrillas'],['cuerpo'],2,'r',['rodillas'],"Baja en sentadilla con el pecho erguido.|Salta con fuerza extendiendo cadera y rodillas.|Aterriza suave y baja de nuevo.","Aterriza flexionando las rodillas para amortiguar."),
+X('sentadilla-frontal-mancuernas','Sentadilla con mancuernas a los hombros','cuadriceps',['gluteos'],['mancuernas'],2,'r',['rodillas'],"Sostén las mancuernas a la altura de los hombros.|Baja en sentadilla manteniendo el torso erguido.|Sube empujando con los talones.","Los codos apuntan al frente para mantener la postura."),
+X('zancada-caminando','Zancadas caminando','cuadriceps',['gluteos'],['cuerpo'],1,'r',['rodillas'],"Da un paso largo al frente y baja ambas rodillas a unos 90°.|Empuja con la pierna delantera para avanzar al siguiente paso.|Alterna piernas mientras caminas.","Necesitas espacio libre de unos 4 pasos."),
+X('zancada-inversa','Zancada inversa','cuadriceps',['gluteos'],['cuerpo'],1,'r',['rodillas'],"De pie, da un paso largo hacia atrás.|Baja hasta que ambas rodillas formen unos 90°.|Empuja con la pierna delantera para volver.","Suele ser más amable con las rodillas que la zancada al frente."),
+X('sumo-mancuerna','Sentadilla sumo con mancuerna','gluteos',['cuadriceps'],['mancuernas'],1,'r',[],"Separa los pies más que los hombros y sostén una mancuerna entre las piernas.|Baja con el torso erguido y las rodillas hacia fuera.|Sube apretando los glúteos.","Abre las rodillas siguiendo la dirección de los pies."),
+X('smith','Sentadilla en máquina Smith','cuadriceps',['gluteos'],['maquina'],1,'r',['rodillas'],"Colócate bajo la barra con los pies un poco adelantados.|Baja controlado hasta que los muslos queden paralelos al suelo.|Sube empujando con todo el pie.","La barra guiada ayuda a aprender el movimiento."),
+X('sentadilla-banda','Sentadilla con banda','cuadriceps',['gluteos'],['banda'],1,'r',['rodillas'],"Coloca la banda sobre las rodillas o pisa la banda y sujeta los extremos a los hombros.|Baja en sentadilla empujando las rodillas hacia fuera.|Sube con control.","Mantén la tensión en la banda todo el tiempo."),
+X('puente-una-pierna','Puente de glúteos a una pierna','gluteos',['isquios'],['cuerpo'],2,'r',[],"Acostado, con un pie apoyado y la otra pierna estirada.|Sube la cadera apretando el glúteo de la pierna de apoyo.|Baja despacio y cambia de pierna.","Mantén la cadera nivelada."),
+X('muerto-una-pierna','Peso muerto a una pierna con mancuerna','isquios',['gluteos'],['mancuernas'],2,'r',['lumbar'],"De pie sobre una pierna, con una mancuerna en la mano contraria.|Inclina el torso llevando la otra pierna atrás.|Vuelve apretando el glúteo.","Apóyate en una pared si te cuesta el equilibrio."),
+X('rumano-kettlebell','Peso muerto rumano con kettlebell','isquios',['gluteos','lumbar'],['kettlebell'],1,'r',['lumbar'],"De pie, sostén la kettlebell con ambas manos frente a los muslos.|Lleva la cadera atrás bajando la pesa cerca de las piernas.|Sube apretando los glúteos.","Mantén la espalda recta y las rodillas suaves."),
+X('curl-femoral-sentado','Curl femoral sentado en máquina','isquios',[],['maquina'],1,'r',[],"Siéntate con la almohadilla sobre los tobillos y el respaldo ajustado.|Dobla las rodillas llevando los talones hacia abajo y atrás.|Vuelve despacio.","No despegues la cadera del asiento."),
+X('hip-thrust-banda','Empuje de cadera con banda','gluteos',['isquios'],['banco','banda'],2,'r',[],"Apoya la espalda alta en el banco con la banda sobre la cadera, anclada a ambos lados.|Sube la cadera hasta alinear tronco y muslos.|Baja controlado.","Aprieta fuerte los glúteos arriba."),
+X('estocada-lateral','Estocada lateral','cuadriceps',['gluteos'],['cuerpo'],1,'r',['rodillas'],"De pie con los pies juntos, da un paso largo hacia un lado.|Flexiona esa rodilla llevando la cadera atrás, con la otra pierna estirada.|Empuja para volver y cambia de lado.","Mantén los pies apuntando al frente.")
+];
+const EXI=Object.fromEntries(EX.map(e=>[e.id,e]));
+
+/* ================= Figura muscular ================= */
+function mir(d){return d.replace(/(-?\d+\.?\d*)[ ,](-?\d+\.?\d*)/g,(m,x,y)=>(200-x)+' '+y)}
+const sE=(m,cx,cy,rx,ry)=>[{m,tag:'ellipse',a:`cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}"`},{m,tag:'ellipse',a:`cx="${200-cx}" cy="${cy}" rx="${rx}" ry="${ry}"`}];
+const sP=(m,d)=>[{m,tag:'path',a:`d="${d}"`},{m,tag:'path',a:`d="${mir(d)}"`}];
+const oP=(m,d)=>[{m,tag:'path',a:`d="${d}"`}];
+const FRONT=[].concat(
+  oP('trapecio','M90 52 L110 52 L124 64 Q100 59 76 64 Z'),
+  sE('hombros',62,74,13,13),
+  sP('pecho','M76 68 Q99 64 99 70 L99 98 Q82 104 72 92 Q70 78 76 68 Z'),
+  oP('abdomen','M86 104 L114 104 L112 154 Q100 160 88 154 Z'),
+  sP('oblicuos','M74 102 L84 106 L86 152 Q77 148 73 128 Z'),
+  sE('biceps',50,104,9,20),
+  sE('antebrazos',41,154,8,24),
+  sE('cuadriceps',84,234,16,50),
+  sE('pantorrillas',82,336,10,38)
+);
+const BACK=[].concat(
+  oP('trapecio','M88 48 L112 48 L131 68 L100 110 L69 68 Z'),
+  sE('hombros',62,74,13,13),
+  sP('espalda','M72 86 L99 114 L99 138 Q80 138 74 124 Q70 104 72 86 Z'),
+  sE('triceps',50,104,9,20),
+  sE('antebrazos',41,154,8,24),
+  oP('lumbar','M88 142 L112 142 L110 168 Q100 172 90 168 Z'),
+  sE('gluteos',86,184,15,17),
+  sE('isquios',84,246,15,44),
+  sE('pantorrillas',82,336,11,38)
+);
+const SIL=(()=>{
+  const e=(cx,cy,rx,ry)=>`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}"/>`;
+  let s=`<circle cx="100" cy="30" r="16"/><rect x="93" y="44" width="14" height="14"/><path d="M72 64 Q100 56 128 64 L126 108 L124 158 Q100 172 76 158 L74 108 Z"/><path d="M76 156 Q100 172 124 156 L121 192 L79 192 Z"/>`;
+  [[50,104,11,22],[41,154,10,26],[84,234,18,52],[84,288,11,11],[82,336,12,40],[80,386,13,6],[37,186,7,8]].forEach(a=>{s+=e(a[0],a[1],a[2],a[3])+e(200-a[0],a[1],a[2],a[3])});
+  return s;
+})();
+function fig(view,o){
+  o=o||{};
+  const regs=view==='front'?FRONT:BACK;
+  const body=regs.map(r=>{
+    let c='m';
+    if(o.sel&&o.sel.has(r.m))c+=' sel';
+    if(o.p===r.m)c+=' p';else if(o.s&&o.s.indexOf(r.m)>-1)c+=' s';
+    const at=o.inter?` data-a="mus" data-m="${r.m}" role="button" tabindex="0" aria-label="${MUS[r.m]}"`:'';
+    return `<${r.tag} ${r.a} class="${c}"${at}></${r.tag}>`;
+  }).join('');
+  return `<svg viewBox="${o.vb||'0 0 200 400'}" class="fig${o.inter?' inter':''}${o.small?' sm':''}" role="img" aria-label="Figura humana, vista ${view==='front'?'frontal':'trasera'}"><g class="sil">${SIL}</g>${body}</svg>`;
+}
+
+/* ================= Estado ================= */
+const KEY='fibra.v1';
+function defaults(){return{p:{name:'',age:'',weight:'',height:'',level:1,goal:'musculo',days:3,minutes:30,objs:['musculo'],equip:['cuerpo'],limits:[],mainGoal:'',goals:[]},plan:null,history:[],sel:[],routines:[]}}
+function load(){
+  const d=defaults();
+  try{const r=localStorage.getItem(KEY);if(r){const j=JSON.parse(r);d.p=Object.assign(d.p,j.p||{});d.plan=j.plan||null;d.history=j.history||[];d.routines=j.routines||[];d.sel=(j.sel||[]).filter(m=>MUS[m])}}catch(e){}
+  d.p.objs=(Array.isArray(d.p.objs)?d.p.objs:[]).filter(k=>GOALS[k]);if(!d.p.objs.length)d.p.objs=[GOALS[d.p.goal]?d.p.goal:'musculo'];
+  d.p.minutes=Math.max(10,Math.min(180,+d.p.minutes||30));
+  d.p.equip=d.p.equip.filter(k=>EQ[k]);if(d.p.equip.indexOf('maquina')>-1&&d.p.equip.indexOf('polea')<0)d.p.equip.push('polea');if(d.p.equip.indexOf('cuerpo')<0)d.p.equip.push('cuerpo');
+  return d;
+}
+let S=load();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const ui={tab:'home',layers:[],q:'',grp:null,customT:false,run:null,cal:{y:new Date().getFullYear(),m:new Date().getMonth()},selDay:null,progEx:'',cdel:null};
+const todayIdx=()=>(new Date().getDay()+6)%7;
+const owned=()=>new Set(S.p.equip.concat('cuerpo'));
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $=s=>document.querySelector(s);
+
+/* ================= Plan semanal ================= */
+const G={
+  full1:['pecho','espalda','cuadriceps','gluteos','abdomen'],
+  full2:['hombros','isquios','gluteos','biceps','triceps','oblicuos'],
+  push:['pecho','hombros','triceps'],
+  pull:['espalda','trapecio','biceps'],
+  legs:['cuadriceps','isquios','gluteos','pantorrillas'],
+  upper:['pecho','espalda','hombros','biceps','triceps'],
+  lower:['cuadriceps','isquios','gluteos','pantorrillas','abdomen']
+};
+const PDAYS={2:[0,3],3:[0,2,4],4:[0,1,3,4],5:[0,1,2,3,4],6:[0,1,2,3,4,5]};
+const U=G.upper,L=G.lower;
+const PVAR={
+2:[['Cuerpo completo','Dos días que trabajan todo el cuerpo. Ideal si tienes poco tiempo.',[['Cuerpo completo A',G.full1],['Cuerpo completo B',G.full2]]],
+   ['Superior e inferior','Un día para arriba y otro para abajo.',[['Tren superior',U],['Tren inferior',L]]],
+   ['Empuje y tirón','Un día de empuje con core y otro de tirón con piernas.',[['Empuje y core',G.push.concat('abdomen')],['Tirón y piernas',G.pull.concat(['cuadriceps','isquios','gluteos'])]]]],
+3:[['Empuje, tirón y piernas','El clásico: cada día un tipo de movimiento.',[['Empuje',G.push],['Tirón',G.pull.concat('antebrazos')],['Piernas y core',G.legs.concat('abdomen')]]],
+   ['Cuerpo completo x3','Todo el cuerpo cada día, con variaciones. Buena base para empezar.',[['Cuerpo completo A',G.full1],['Cuerpo completo B',G.full2],['Cuerpo completo C',['pecho','espalda','hombros','cuadriceps','abdomen']]]],
+   ['Por zonas','Pecho y espalda, luego piernas y al final hombros, brazos y core.',[['Pecho y espalda',['pecho','espalda','trapecio']],['Piernas y glúteos',['cuadriceps','isquios','gluteos','pantorrillas']],['Hombros, brazos y core',['hombros','biceps','triceps','abdomen','oblicuos']]]]],
+4:[['Superior e inferior x2','Dos días de arriba y dos de abajo, con descanso en medio.',[['Tren superior',U],['Tren inferior',L],['Tren superior',U],['Tren inferior',L]]],
+   ['Por grupos','Pecho y tríceps, espalda y bíceps, piernas, hombros y core.',[['Pecho y tríceps',['pecho','triceps']],['Espalda y bíceps',['espalda','trapecio','biceps']],['Piernas',['cuadriceps','isquios','gluteos','pantorrillas']],['Hombros y core',['hombros','abdomen','oblicuos']]]],
+   ['Empuje, tirón, piernas y core','Tres días de movimiento y uno de cuerpo medio y core.',[['Empuje',G.push],['Tirón',G.pull],['Piernas',G.legs],['Core y glúteos',['abdomen','oblicuos','lumbar','gluteos']]]]],
+5:[['Una zona por día','Cada día se enfoca en una zona del cuerpo.',[['Pecho y tríceps',['pecho','triceps']],['Espalda y bíceps',['espalda','trapecio','biceps']],['Piernas',['cuadriceps','isquios','pantorrillas']],['Hombros y core',['hombros','abdomen','oblicuos']],['Glúteos y lumbar',['gluteos','lumbar','isquios']]]],
+   ['Empuje, tirón, piernas y mixtos','Combina tres días de movimiento con dos de superior e inferior.',[['Empuje',G.push],['Tirón',G.pull],['Piernas',G.legs],['Tren superior',U],['Tren inferior',L]]],
+   ['Brazos y core con más peso','Más días para hombros, brazos y abdomen.',[['Pecho',['pecho','hombros']],['Espalda',['espalda','trapecio','lumbar']],['Piernas',['cuadriceps','isquios','gluteos','pantorrillas']],['Brazos',['biceps','triceps','antebrazos']],['Core y glúteos',['abdomen','oblicuos','gluteos']]]]],
+6:[['Empuje, tirón y piernas x2','Dos vueltas por semana, la segunda con variaciones.',[['Empuje A',G.push],['Tirón A',G.pull],['Piernas A',G.legs],['Empuje B',G.push.concat('abdomen')],['Tirón B',G.pull.concat('antebrazos')],['Piernas B',G.legs.concat('lumbar')]]],
+   ['Por zonas con día completo','Cinco zonas y un día ligero de cuerpo completo.',[['Pecho y tríceps',['pecho','triceps']],['Espalda y bíceps',['espalda','trapecio','biceps']],['Piernas',['cuadriceps','isquios','pantorrillas']],['Hombros y core',['hombros','abdomen','oblicuos']],['Glúteos y lumbar',['gluteos','lumbar','isquios']],['Cuerpo completo ligero',G.full1]]],
+   ['Superior, inferior y core','Tres días de superior, dos de inferior y uno de core.',[['Tren superior A',U],['Tren inferior A',L],['Core y lumbar',['abdomen','oblicuos','lumbar']],['Tren superior B',U],['Tren inferior B',L],['Brazos y hombros',['biceps','triceps','hombros','antebrazos']]]]]
+};
+function genPlans(){
+  const n=Math.min(6,Math.max(2,+S.p.days||3));
+  return PVAR[n].map(v=>{
+    const plan=[null,null,null,null,null,null,null];
+    PDAYS[n].forEach((d,k)=>{plan[d]={name:v[2][k][0],muscles:v[2][k][1].slice()}});
+    return{name:v[0],desc:v[1],plan};
+  });
+}
+function genPlan(){return genPlans()[0].plan}
+if(!S.plan){S.plan=genPlan();save()}
+
+/* ================= Recomendador ================= */
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=a[i];a[i]=a[j];a[j]=t}return a}
+function usable(ex){const o=owned();return ex.eq.every(e=>o.has(e))&&!ex.avoid.some(a=>S.p.limits.indexOf(a)>-1)}
+function cands(m,used){
+  const lv=+S.p.level+1;
+  let l=EX.filter(e=>e.p===m&&usable(e)&&!used.has(e.id)&&e.lv<=lv);
+  if(!l.length)l=EX.filter(e=>e.s.indexOf(m)>-1&&usable(e)&&!used.has(e.id)&&e.lv<=lv);
+  return l.map(e=>({e,k:e.lv+Math.random()*1.6})).sort((a,b)=>b.k-a.k).map(x=>x.e);
+}
+function goalKey(){return (S.p.objs&&S.p.objs[0])||'musculo'}
+function rx(ex,gk){
+  const g=GOALS[gk||goalKey()]||GOALS.musculo;
+  if(ex.mode==='t')return{sets:3,reps:[30,40,50][ex.lv-1]+' s',rest:45};
+  return{sets:g.sets,reps:g.reps,rest:g.rest};
+}
+function mk(ex,target,gk){return Object.assign({id:ex.id,target},rx(ex,gk))}
+function lastTrained(){
+  const t={};MK.forEach(m=>t[m]=0);
+  S.history.forEach(h=>(h.muscles||[]).forEach(m=>{const v=Date.parse(h.d)||0;if(v>t[m])t[m]=v}));
+  return t;
+}
+function autoMuscles(){
+  const day=S.plan&&S.plan[todayIdx()];
+  if(day&&day.muscles&&day.muscles.length)return{m:day.muscles.slice(),why:`Hoy toca "${day.name}" en tu plan semanal.`,title:day.name};
+  const t=lastTrained();
+  const cnt=S.p.minutes<=20?2:S.p.minutes>=60?4:3;
+  const pool=MK.filter(x=>cands(x,new Set()).length>0);const m=shuffle(pool.length?pool:MK).sort((a,b)=>t[a]-t[b]).slice(0,cnt);
+  return{m,why:'Elegí lo que llevas más tiempo sin trabajar.',title:'Entrenamiento sugerido'};
+}
+function buildSession(muscles,title,why){
+  let a=null;
+  if(!muscles.length){a=autoMuscles();muscles=a.m;title=title||a.title;why=why||a.why}
+  const N=Math.min(14,Math.max(Math.round(S.p.minutes/6.5),Math.min(muscles.length,8),3));
+  const used=new Set(),items=[],missing=[];
+  let k=0,guard=0;
+  while(items.length<N&&guard++<80){
+    const m=muscles[k%muscles.length];k++;
+    const c=cands(m,used);
+    if(c.length){used.add(c[0].id);items.push(mk(c[0],m))}
+    else{if(missing.indexOf(m)<0)missing.push(m);if(missing.length>=muscles.length)break}
+  }
+  const rank=it=>{const e=EXI[it.id];return CORE.indexOf(it.target)>-1||e.mode==='t'?2:(e.s.length?0:1)};
+  items.sort((x,y)=>rank(x)-rank(y));
+  return{title:title||'Tu entrenamiento',why:why||'',muscles:muscles.slice(),items,missing};
+}
+function minutesOf(items){return Math.max(5,Math.round(items.reduce((s,it)=>s+it.sets*(40+it.rest),0)/60))}
+function groupMuscles(ms){
+  if(ms.length<=5)return ms.map(m=>[m]);
+  const g=[[],[],[],[],[]];ms.forEach((m,i)=>g[i%5].push(m));return g;
+}
+/* Arma varias rutinas: una por músculo elegido (o tres enfoques si es un solo músculo), con al menos 3 ejercicios por músculo */
+function buildPlan(muscles){
+  let why='';
+  if(!muscles.length){const a=autoMuscles();muscles=a.m;why=a.why}
+  const objs=S.p.objs&&S.p.objs.length?S.p.objs:['musculo'];
+  let defs;
+  if(muscles.length>=2){
+    defs=groupMuscles(muscles).map((g,i)=>({ms:g,gk:objs[0],fins:objs.slice(1),title:'Rutina '+(i+1)+' · '+g.map(m=>MUS[m]).join(' y ')}));
+  }else{
+    const ks=objs.slice();
+    ['musculo','fuerza','grasa'].forEach(k=>{if(ks.length<3&&ks.indexOf(k)<0)ks.push(k)});
+    defs=ks.slice(0,Math.max(3,objs.length)).map((k,i)=>({ms:[muscles[0]],gk:k,fins:[],title:'Rutina '+(i+1)+' · '+MUS[muscles[0]]+' · '+GOALS[k].n}));
+  }
+  const usedPlan=new Set();
+  const routines=defs.map(d=>{
+    const local=new Set(),items=[],short=[];
+    const others=muscles.filter(m=>d.ms.indexOf(m)<0);
+    const take=m=>{
+      let c=cands(m,new Set(Array.from(usedPlan).concat(Array.from(local))));
+      if(!c.length)c=cands(m,local);
+      if(!c.length)return false;
+      local.add(c[0].id);usedPlan.add(c[0].id);items.push(mk(c[0],m,d.gk));return true;
+    };
+    d.ms.forEach(m=>{let n=0;while(n<3&&take(m))n++;if(n<3)short.push(MUS[m]+': solo hay '+n+(n===1?' opción':' opciones')+' con tu equipo y tus limitaciones.')});
+    const extra=3*d.ms.length;let added=0,guard=0;
+    while(minutesOf(items)<S.p.minutes&&items.length<16&&guard++<60){
+      const m=added<extra?d.ms[added%d.ms.length]:others[(added-extra)%Math.max(1,others.length)];
+      if(m==null)break;
+      take(m);added++;
+    }
+    const rank=it=>{const e=EXI[it.id];return CORE.indexOf(it.target)>-1||e.mode==='t'?2:(e.s.length?0:1)};
+    items.sort((x,y)=>rank(x)-rank(y));
+    d.fins.forEach((k,j)=>{const ix=items.length-1-j;if(ix>=0&&items.length>d.fins.length)Object.assign(items[ix],rx(EXI[items[ix].id],k),{fin:k})});
+    let g2=0;while(minutesOf(items)>S.p.minutes*1.1&&g2++<60){const c=items.filter(it=>it.sets>2).sort((a,b)=>b.sets-a.sets)[0];if(!c)break;c.sets--}
+    return{title:d.title,focus:d.ms.slice(),gk:d.gk,items,short};
+  }).filter(r=>r.items.length);
+  return{routines,muscles:muscles.slice(),why,objs:objs.slice()};
+}
+function openMulti(P){
+  ui.layers=ui.layers.filter(l=>l.t!=='multi'&&l.t!=='session');
+  ui.layers.push({t:'multi',p:P,open:{0:true}});renderLayers();
+}
+
+
+/* ================= Vistas ================= */
+const ICON={
+  rut:'<svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h6M9 18h3"/></svg>',
+  hist:'<svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></svg>',
+  home:'<svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>',
+  lib:'<svg viewBox="0 0 24 24"><path d="M3 9v6M6 7v10M18 7v10M21 9v6M6 12h12"/></svg>',
+  me:'<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg>'
+};
+function renderTabs(){
+  const t=[['home','Inicio'],['lib','Ejercicios'],['rut','Rutinas'],['me','Acerca de mí']];
+  $('#tabs').innerHTML='<div>'+t.map(x=>`<button data-a="tab" data-t="${x[0]}"${ui.tab===x[0]?' aria-current="page"':''}>${ICON[x[0]]}<span>${x[1]}</span></button>`).join('')+'</div>';
+}
+function header(){
+  const hi=S.p.name?`Hola, ${esc(S.p.name)}`:'Hola, vamos a entrenar';
+  return `<div class="top"><div class="brand"><div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M4 9v6M7 7v10M17 7v10M20 9v6M7 12h10"/></svg></div><b>Couch Fit</b></div><span class="hello">${hi}</span></div>`;
+}
+function chipEq(){
+  const o=owned();
+  return `<div class="chips"><button class="chip fixed" aria-pressed="true" disabled>${EQ.cuerpo}</button>${EQLIST.map(k=>`<button class="chip" data-a="eq" data-k="${k}" aria-pressed="${o.has(k)}">${EQ[k]}</button>`).join('')}</div><p class="sub" style="margin:10px 0 0;font-size:13.5px">Tu peso corporal siempre cuenta. Silla, colchoneta y mesa se dan por sentados. Los ejercicios con barra pesada, como el press de banca o la sentadilla, piden también el rack.</p>`;
+}
+function seg(name,vals,cur){
+  return `<div class="seg" role="group">${vals.map(v=>`<button data-a="${name}" data-v="${v[0]}" aria-pressed="${String(cur)===String(v[0])}">${v[1]}</button>`).join('')}</div>`;
+}
+const CROP={pecho:'45 45 110 110',hombros:'35 45 130 130',biceps:'30 50 140 140',triceps:'30 50 140 140',antebrazos:'20 100 160 140',abdomen:'55 85 90 90',oblicuos:'50 85 100 100',cuadriceps:'45 175 110 110',trapecio:'50 30 100 100',espalda:'45 60 110 110',lumbar:'55 120 90 90',gluteos:'50 150 100 100',isquios:'45 190 110 110',pantorrillas:'40 290 120 120'};
+const GROUPS=[
+  {k:'abdominales',n:'Abdominales',m:['abdomen','oblicuos'],v:'front',vb:'55 85 90 90'},
+  {k:'espalda',n:'Espalda',m:['espalda','trapecio','lumbar'],v:'back',vb:'40 40 120 140'},
+  {k:'biceps',n:'Bíceps',m:['biceps'],v:'front',vb:CROP.biceps},
+  {k:'pantorrillas',n:'Pantorrillas',m:['pantorrillas'],v:'front',vb:CROP.pantorrillas},
+  {k:'pecho',n:'Pecho',m:['pecho'],v:'front',vb:CROP.pecho},
+  {k:'antebrazos',n:'Antebrazos',m:['antebrazos'],v:'front',vb:CROP.antebrazos},
+  {k:'piernas',n:'Piernas',m:['cuadriceps','isquios','gluteos'],v:'front',vb:'35 165 130 150'},
+  {k:'hombros',n:'Hombros',m:['hombros'],v:'front',vb:CROP.hombros},
+  {k:'triceps',n:'Tríceps',m:['triceps'],v:'back',vb:CROP.triceps},
+  {k:'todos',n:'Todos',m:[],v:'front',vb:'0 0 200 400'}
+];
+const grpOf=k=>GROUPS.filter(g=>g.k===k)[0];
+const inGrp=(g,e)=>!g.m.length||g.m.indexOf(e.p)>-1;
+function thumbG(g){return `<span class="thumb">${fig(g.v,{sel:new Set(g.m.length?g.m:MK),vb:g.vb})}</span>`}
+function thumbE(e){return `<span class="thumb">${fig(e.view,{p:e.p,s:e.s,vb:CROP[e.p]})}</span>`}
+function figPair(sel){
+  return `<div class="pair"><div><div class="cap">Frente</div>${fig('front',{sel,inter:true})}</div><div><div class="cap">Espalda</div>${fig('back',{sel,inter:true})}</div></div>`;
+}
+const TIMES=[15,20,30,45,60,75,90];
+function goalChips(){
+  return `<div class="chips">${Object.keys(GOALS).map(k=>{const i=S.p.objs.indexOf(k);return `<button class="chip" data-a="goal" data-k="${k}" aria-pressed="${i>-1}">${i>-1?`<b class="ord">${i+1}</b>`:''}${GOALS[k].n}</button>`}).join('')}</div><p class="sub" style="margin:8px 0 0">Elige uno o más. El primero que marques es tu objetivo principal.</p>`;
+}
+function homeView(){
+  const sel=new Set(S.sel);
+  const day=S.plan&&S.plan[todayIdx()];
+  const selTxt=S.sel.length?'Elegiste: '+S.sel.map(m=>MUS[m]).join(', ')+'.':'Toca los músculos en el cuerpo. Si no eliges ninguno, Couch Fit decide por ti.';
+  const today=day?`<div class="card today"><h2>Hoy te toca: ${esc(day.name)}</h2><p>${day.muscles.map(m=>MUS[m]).join(', ')}.</p><button class="btn sm" data-a="planday" data-d="${todayIdx()}">Armar la sesión de hoy</button></div>`
+    :`<div class="card today"><h2>Hoy es día libre en tu plan</h2><p>Descansar también es parte del progreso. Si quieres, entrena igual con lo que elijas abajo.</p></div>`;
+  const avail=EX.filter(usable).length;
+  const customOn=TIMES.indexOf(S.p.minutes)<0||ui.customT;
+  return header()+today+
+  `<section class="card"><h2><span class="step">1</span>¿Qué quieres trabajar?</h2><p class="sub">Toca uno o varios músculos, de frente o de espalda.</p>
+    <div class="mapwrap">${figPair(sel)}<div class="sel-note">${esc(selTxt)}</div></div>
+    <div class="chips" style="margin-top:8px">${MK.map(m=>`<button class="chip" data-a="musc" data-m="${m}" aria-pressed="${sel.has(m)}">${MUS[m]}</button>`).join('')}</div>
+    ${S.sel.length?'<button class="btn sm soft" style="margin-top:12px" data-a="clearsel">Quitar selección</button>':''}
+  </section>`+
+  `<section class="card"><h2><span class="step">2</span>¿Qué equipo tienes?</h2><p class="sub">Marca todo lo que puedes usar. Solo verás ejercicios que puedas hacer con eso.</p>${chipEq()}<p class="sub" style="margin:14px 0 0"><b>${avail}</b> de ${EX.length} ejercicios disponibles con tu equipo.</p></section>`+
+  `<section class="card"><h2><span class="step">3</span>Tu realidad de hoy</h2>
+    <span class="lbl">Nivel</span>${seg('level',[[1,'Principiante'],[2,'Intermedio'],[3,'Avanzado']],S.p.level)}
+    <span class="lbl">Tiempo disponible</span>
+    <div class="chips">${TIMES.map(t=>`<button class="chip" data-a="minutes" data-v="${t}" aria-pressed="${!customOn&&S.p.minutes===t}">${t} min</button>`).join('')}<button class="chip" data-a="customt" aria-pressed="${customOn}">Personalizar</button></div>
+    ${customOn?`<div class="row" style="margin-top:10px"><input class="field" id="mins" type="number" min="10" max="180" inputmode="numeric" value="${S.p.minutes}" aria-label="Minutos disponibles" style="max-width:120px"><span>minutos (entre 10 y 180)</span></div>`:''}
+    <span class="lbl">Objetivos</span>${goalChips()}
+  </section>`+
+  `<div class="stack"><button class="btn" data-a="recommend">${S.sel.length?'Armar entrenamientos con lo elegido':'Recomiéndame entrenamientos'}</button><p class="sub" style="margin:0;text-align:center">Si quieres ver los ejercicios de cada grupo muscular, ve a la pestaña Ejercicios.</p></div>`;
+}
+function libList(){
+  const g=grpOf(ui.grp),q=ui.q.trim().toLowerCase();
+  return EX.filter(e=>inGrp(g,e)&&(!q||e.n.toLowerCase().indexOf(q)>-1));
+}
+function libItems(){
+  const l=libList();
+  if(!l.length)return '<p class="empty">No encontré ejercicios con ese nombre.</p>';
+  return l.map(e=>`<button class="li" data-a="detail" data-id="${e.id}">${thumbE(e)}<div class="grow"><h3>${esc(e.n)}</h3><div class="meta">${MUS[e.p]} · ${e.eq.map(x=>EQ[x]).join(' + ')}</div></div><span class="chev" aria-hidden="true">›</span></button>`).join('');
+}
+function libView(){
+  if(!ui.grp){
+    return header()+`<div class="card" style="padding:4px 14px 6px"><h2 style="padding-top:12px">Ejercicios</h2><p class="sub">Elige un grupo muscular para ver sus ejercicios.</p>`+
+      GROUPS.map(g=>`<button class="grp" data-a="opengrp" data-g="${g.k}">${thumbG(g)}<span class="gn">${g.n}</span><span class="cnt">${EX.filter(e=>inGrp(g,e)).length}</span><span class="chev" aria-hidden="true">›</span></button>`).join('')+`</div>`;
+  }
+  const g=grpOf(ui.grp);
+  return `<div class="bar-top" style="margin-top:4px"><button class="back" data-a="libback" aria-label="Volver a los grupos">‹</button><h2 class="grow" style="font-size:22px">${g.n}</h2></div>
+    <div class="card"><input class="search" id="q" type="search" placeholder="Buscar por nombre" value="${esc(ui.q)}" aria-label="Buscar ejercicio"></div>
+    <div id="liblist">${libItems()}</div>`;
+}
+function rtStats(name){
+  const h=S.history.filter(x=>x.name===name);
+  if(!h.length)return 'Aún sin hacer';
+  const d=new Date(h[h.length-1].d);
+  return `Hecha ${h.length} ${h.length===1?'vez':'veces'} · última el ${d.getDate()} de ${MESES[d.getMonth()]}`;
+}
+function rutView(){
+  const rs=S.routines;
+  return header()+`<div class="card"><h2>Mis rutinas</h2><p class="sub">Crea tus propias rutinas o guarda las que arma Couch Fit desde Inicio.</p><div class="stack"><button class="btn" data-a="newrt">Crear rutina</button><button class="btn alt" data-a="gohome">Armar con el recomendador</button></div></div>`+
+  (rs.length?rs.map(r=>{
+    const its=r.items.filter(it=>EXI[it.id]);
+    const ms=[];its.forEach(it=>{const e=EXI[it.id];if(ms.indexOf(e.p)<0)ms.push(e.p)});
+    const mins=minutesOf(its.map(it=>({sets:+it.sets||3,rest:(GOALS[goalKey()]||GOALS.musculo).rest})));
+    return `<div class="card"><div class="row" style="align-items:flex-start;gap:12px"><div class="grow"><h2>${esc(r.name)}</h2><p class="sub" style="margin-bottom:6px">${its.length} ${its.length===1?'ejercicio':'ejercicios'} · unos ${mins} min${ms.length?' · '+ms.map(m=>MUS[m]).join(', '):''}</p><p class="sub" style="font-size:13.5px;margin-bottom:10px">${esc(rtStats(r.name))}</p></div></div>
+      <div class="row wrap" style="margin-bottom:12px">${ms.slice(0,5).map(m=>{const e=its.filter(it=>EXI[it.id].p===m)[0];return thumbE(EXI[e.id])}).join('')}</div>
+      <div class="row wrap"><button class="btn sm" data-a="startrt" data-id="${r.id}">Empezar</button><button class="btn sm soft" data-a="editrt" data-id="${r.id}">Editar</button><button class="btn sm soft" data-a="duprt" data-id="${r.id}">Duplicar</button><button class="btn sm soft" data-a="delrt" data-id="${r.id}">${ui.cdel===r.id?'¿Seguro? Toca otra vez':'Borrar'}</button></div></div>`;
+  }).join(''):'<p class="empty">Aún no tienes rutinas. Crea la primera o guarda una de las que arma el recomendador.</p>');
+}
+function pickItems(L){
+  const rt=ui.layers.filter(l=>l.t==='rt')[0],q=(L.q||'').trim().toLowerCase();
+  const l=EX.filter(e=>(!L.m||e.p===L.m)&&(!q||e.n.toLowerCase().indexOf(q)>-1));
+  if(!l.length)return '<p class="empty">Sin resultados.</p>';
+  return l.map(e=>{const on=rt.r.items.some(x=>x.id===e.id);return `<button class="li" data-a="pickadd" data-id="${e.id}">${thumbE(e)}<div class="grow"><h3>${esc(e.n)}</h3><div class="meta">${MUS[e.p]} · ${e.eq.map(x=>EQ[x]).join(' + ')}</div></div><span class="chip" aria-pressed="${on}">${on?'Agregado':'Agregar'}</span></button>`}).join('');
+}
+const MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+function dk(iso){const d=new Date(iso);return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
+ui.selDay=dk(new Date().toISOString());
+function lastLog(id){for(let i=S.history.length-1;i>=0;i--){const it=(S.history[i].items||[]).filter(x=>x.id===id&&x.w>0)[0];if(it)return it}return null}
+function progData(id){
+  return S.history.slice().sort((a,b)=>Date.parse(a.d)-Date.parse(b.d)).map(h=>{
+    const w=Math.max.apply(null,[0].concat((h.items||[]).filter(x=>x.id===id).map(x=>x.w||0)));
+    return w>0?{w,date:new Date(h.d).toLocaleDateString('es',{day:'2-digit',month:'2-digit'})}:null;
+  }).filter(Boolean);
+}
+function chartSVG(pts){
+  const W=320,H=150,l=46,r=14,t=14,b=26;
+  const ws=pts.map(p=>p.w);let lo=Math.min.apply(null,ws),hi=Math.max.apply(null,ws);
+  if(lo===hi){lo=Math.max(0,lo-1);hi=hi+1}
+  const X=i=>pts.length===1?(l+(W-l-r)/2):l+i*(W-l-r)/(pts.length-1);
+  const Y=v=>t+(H-t-b)*(1-(v-lo)/(hi-lo));
+  const f=n=>n.toFixed(1);
+  const path=pts.map((p,i)=>(i?'L':'M')+f(X(i))+' '+f(Y(p.w))).join(' ');
+  return `<svg class="ch" viewBox="0 0 ${W} ${H}" role="img" aria-label="Progreso de peso: de ${pts[0].w} kg a ${pts[pts.length-1].w} kg" style="width:100%;height:auto">
+  <line x1="${l}" x2="${W-r}" y1="${f(Y(hi))}" y2="${f(Y(hi))}" stroke="var(--line)"/><line x1="${l}" x2="${W-r}" y1="${f(Y(lo))}" y2="${f(Y(lo))}" stroke="var(--line)"/>
+  <text x="${l-6}" y="${f(Y(hi)+4)}" text-anchor="end">${hi} kg</text><text x="${l-6}" y="${f(Y(lo)+4)}" text-anchor="end">${lo} kg</text>
+  <path d="${path}" fill="none" stroke="var(--orange)" stroke-width="2.5" stroke-linejoin="round"/>
+  ${pts.map((p,i)=>`<circle cx="${f(X(i))}" cy="${f(Y(p.w))}" r="${i===pts.length-1?5:3.5}" fill="var(--orange-btn)"/>`).join('')}
+  <text x="${l}" y="${H-6}">${pts[0].date}</text><text x="${W-r}" y="${H-6}" text-anchor="end">${pts[pts.length-1].date}</text></svg>`;
+}
+function histView(){
+  const H=S.history,now=new Date(),y=ui.cal.y,m=ui.cal.m;
+  const first=(new Date(y,m,1).getDay()+6)%7,nd=new Date(y,m+1,0).getDate();
+  const byDay={};H.forEach(h=>{const k=dk(h.d);byDay[k]=(byDay[k]||0)+1});
+  const todayK=dk(now.toISOString());
+  let cells=['L','M','X','J','V','S','D'].map(x=>`<span class="dh">${x}</span>`).join('');
+  for(let i=0;i<first;i++)cells+='<span></span>';
+  for(let d=1;d<=nd;d++){
+    const k=y+'-'+(m+1)+'-'+d;
+    cells+=`<button class="cd${byDay[k]?' has':''}${k===ui.selDay?' sel':''}${k===todayK?' tod':''}" data-a="selday" data-k="${k}" aria-label="${d} de ${MESES[m]}${byDay[k]?', con entrenamiento':''}">${d}</button>`;
+  }
+  const inMonth=H.filter(h=>{const d=new Date(h.d);return d.getFullYear()===y&&d.getMonth()===m}).length;
+  const totalSets=H.reduce((s,h)=>s+(h.sets||0),0);
+  const ds=H.filter(h=>dk(h.d)===ui.selDay).reverse();
+  const sp=ui.selDay.split('-');
+  const dayList=ds.length?ds.map(h=>`<div class="entry"><b>${esc(h.name||'Entrenamiento')}</b> <span class="tag">${new Date(h.d).toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'})}</span><div style="font-size:13.5px;color:var(--brown)">${(h.muscles||[]).map(x=>MUS[x]).join(', ')}</div>${(h.items||[]).map(it=>EXI[it.id]?`<div style="font-size:14.5px">${esc(EXI[it.id].n)} · ${it.sets} ${it.sets===1?'serie':'series'}${it.w?' · '+it.w+' kg':''}${it.r?' × '+esc(it.r):''}</div>`:'').join('')}</div>`).join(''):'<p class="empty" style="padding:8px 0 0">Sin entrenamientos ese día.</p>';
+  const ids=[];H.forEach(h=>(h.items||[]).forEach(x=>{if(x.w>0&&ids.indexOf(x.id)<0&&EXI[x.id])ids.push(x.id)}));
+  const cur=ids.indexOf(ui.progEx)>-1?ui.progEx:ids[0];
+  let prog='<p class="empty" style="padding:8px 0 0">Anota el peso que usas al entrenar y aquí verás cómo mejoras.</p>';
+  if(cur){
+    const pts=progData(cur);
+    prog=`<label class="lbl" for="prog">Ejercicio</label><select class="field" id="prog" data-a="progex">${ids.map(id=>`<option value="${id}"${id===cur?' selected':''}>${esc(EXI[id].n)}</option>`).join('')}</select><div style="margin-top:12px">${chartSVG(pts)}</div>${pts.length<2?'<p class="sub" style="margin:6px 0 0">Registra el peso en otra sesión para ver la curva.</p>':''}`;
+  }
+  return header()+
+  `<div class="tiles"><div class="tile"><b>${H.length}</b><span>Sesiones</span></div><div class="tile"><b>${inMonth}</b><span>En ${MESES[m]}</span></div><div class="tile"><b>${totalSets}</b><span>Series</span></div></div>`+
+  `<section class="card"><div class="row" style="justify-content:space-between;margin-bottom:10px"><button class="back" data-a="calprev" aria-label="Mes anterior">‹</button><h2 style="text-transform:capitalize;font-size:19px">${MESES[m]} ${y}</h2><button class="back" data-a="calnext" aria-label="Mes siguiente">›</button></div><div class="cal">${cells}</div></section>`+
+  `<section class="card"><h2>${sp[2]} de ${MESES[+sp[1]-1]}</h2>${dayList}</section>`+
+  `<section class="card"><h2>Progreso por ejercicio</h2>${prog}</section>`;
+}
+function weekProgress(){
+  const now=new Date(),start=new Date(now);start.setHours(0,0,0,0);start.setDate(start.getDate()-todayIdx());
+  const done=S.history.filter(h=>Date.parse(h.d)>=start.getTime()).length;
+  const planned=(S.plan||[]).filter(Boolean).length;
+  return{done,planned};
+}
+function planRows(){
+  return DAYS.map((d,i)=>{
+    const p=S.plan[i];
+    return `<div class="day${i===todayIdx()?' hoy':''}"><div class="dn">${d.slice(0,3)}</div><div>${p?`<div class="nm">${esc(p.name)}</div><div class="ms">${p.muscles.map(m=>MUS[m]).join(', ')}</div>`:'<div class="rest">Descanso</div>'}</div><div class="row">${p?`<button class="btn sm soft" data-a="planday" data-d="${i}">Entrenar</button>`:''}<button class="ibtn" data-a="editday" data-d="${i}" aria-label="Editar ${d}">✎</button></div></div>`;
+  }).join('');
+}
+function meView(){
+  const p=S.p,w=weekProgress(),pct=w.planned?Math.min(100,Math.round(w.done/w.planned*100)):0;
+  return header()+
+  `<section class="card"><h2>Acerca de mí</h2><p class="sub">Cuéntame de ti para ajustar tus entrenamientos. Todo queda guardado en este dispositivo.</p>
+    <div class="fl"><label for="f-name">Nombre</label><input class="field" id="f-name" data-f="name" value="${esc(p.name)}" autocomplete="given-name"></div>
+    <div class="grid3" style="margin-top:10px">
+      <div class="fl"><label for="f-age">Edad</label><input class="field" id="f-age" data-f="age" inputmode="numeric" value="${esc(p.age)}"></div>
+      <div class="fl"><label for="f-weight">Peso (kg)</label><input class="field" id="f-weight" data-f="weight" inputmode="decimal" value="${esc(p.weight)}"></div>
+      <div class="fl"><label for="f-height">Estatura (cm)</label><input class="field" id="f-height" data-f="height" inputmode="numeric" value="${esc(p.height)}"></div>
+    </div>
+    <span class="lbl">Nivel</span>${seg('level',[[1,'Principiante'],[2,'Intermedio'],[3,'Avanzado']],p.level)}
+    <span class="lbl">Limitaciones</span><p class="sub" style="margin:0 0 8px">Evito los ejercicios que más cargan esas zonas.</p><div class="chips">${Object.keys(LIM).map(k=>`<button class="chip" data-a="lim" data-k="${k}" aria-pressed="${p.limits.indexOf(k)>-1}">${LIM[k]}</button>`).join('')}</div>
+    <span class="lbl" style="margin-top:18px">Mi equipo</span>${chipEq()}
+  </section>`+
+  `<section class="card"><h2>Mis metas</h2><p class="sub">Escribe lo que quieres lograr y divídelo en pasos pequeños.</p>
+    <div class="fl"><label for="f-main">Meta principal</label><textarea class="field" id="f-main" data-f="mainGoal" rows="2" placeholder="Ej.: hacer 10 flexiones seguidas en dos meses">${esc(p.mainGoal)}</textarea></div>
+    <span class="lbl">Tipo de resultado</span>${goalChips()}
+    <p class="sub" style="margin-top:10px">${esc(GOALS[p.objs[0]].tip)}</p>
+    <span class="lbl">Metas pequeñas</span>
+    <div class="row"><input class="field grow" id="newgoal" placeholder="Agregar una meta" aria-label="Nueva meta"><button class="btn sm" data-a="addgoal">Agregar</button></div>
+    <div style="margin-top:6px">${p.goals.length?p.goals.map((g,i)=>`<div class="goal${g.done?' done':''}"><input type="checkbox" data-a="goaldone" data-i="${i}" ${g.done?'checked':''} aria-label="Marcar como lograda"><span>${esc(g.t)}</span><button class="ibtn" data-a="delgoal" data-i="${i}" aria-label="Borrar meta">×</button></div>`).join(''):'<p class="empty" style="padding:8px 0 0">Aún no agregas metas pequeñas.</p>'}</div>
+  </section>`+
+  `<section class="card"><h2>Mi semana</h2><p class="sub">Elige cuántos días puedes entrenar y genero un plan. Puedes cambiar cualquier día.</p>
+    <span class="lbl">Días por semana</span>${seg('days',[[2,'2'],[3,'3'],[4,'4'],[5,'5'],[6,'6']],p.days)}
+    <button class="btn alt" style="margin:12px 0" data-a="genplan">Ver alternativas de plan</button>
+    <div>${planRows()}</div>
+    <span class="lbl">Esta semana</span><div class="bar" aria-hidden="true"><i style="width:${pct}%"></i></div>
+    <p class="sub" style="margin:6px 0 0">${w.done} de ${w.planned} sesiones completadas.</p>
+  </section>`;
+}
+function render(){
+  const y=window.scrollY;
+  $('#app').innerHTML=({home:homeView,lib:libView,rut:rutView,hist:histView,me:meView}[ui.tab]||homeView)();
+  renderTabs();
+  window.scrollTo(0,y);
+}
+
+/* ================= Capas ================= */
+function layerHTML(L,idx){
+  const z=40+idx;
+  if(L.t==='detail'){
+    const e=EXI[L.id];
+    const alts=EX.filter(x=>x.p===e.p&&x.id!==e.id).slice(0,4);
+    return `<div class="layer" style="z-index:${z}"><div class="page">
+      <div class="bar-top"><button class="back" data-a="pop" aria-label="Volver">‹</button><h2 class="grow" style="font-size:22px">${esc(e.n)}</h2></div>
+      <div class="demo">${fig(e.view,{p:e.p,s:e.s})}<div class="legend"><span><i class="dot p"></i>Músculo principal</span>${e.s.length?'<span><i class="dot s"></i>Apoyo</span>':''}</div></div>
+      <div class="tags" style="margin-bottom:10px"><span class="tag o">${MUS[e.p]}</span>${e.s.map(m=>`<span class="tag">${MUS[m]}</span>`).join('')}</div>
+      <div class="tags" style="margin-bottom:14px"><span class="tag">${LV[e.lv-1]}</span>${e.eq.map(x=>`<span class="tag">${EQ[x]}</span>`).join('')}${e.mode==='t'?'<span class="tag">Por tiempo</span>':''}${usable(e)?'':'<span class="tag" style="border-color:#E3B18A">Te falta equipo o choca con una limitación</span>'}</div>
+      <h3 style="font-size:18px">Cómo se hace</h3>
+      <ol class="stepsbig">${e.steps.map(s=>`<li><span>${esc(s)}</span></li>`).join('')}</ol>
+      <div class="tipbox"><b>Consejo:</b> ${esc(e.tip)}</div>
+      ${alts.length?`<span class="lbl">Otros ejercicios de ${MUS[e.p].toLowerCase()}</span><div class="chips">${alts.map(a=>`<button class="chip" data-a="detail" data-id="${a.id}">${esc(a.n)}</button>`).join('')}</div>`:''}
+    </div></div>`;
+  }
+  if(L.t==='plans'){
+    return `<div class="layer" style="z-index:${z}"><div class="page">
+      <div class="bar-top"><button class="back" data-a="pop" aria-label="Volver">‹</button><h2 class="grow" style="font-size:22px">Alternativas de plan</h2></div>
+      <p class="sub" style="margin:0 0 12px">Para ${S.p.days} días por semana. Elige una; después puedes cambiar cualquier día, los músculos o poner descanso.</p>
+      ${L.o.map((o,i)=>`<section class="card"><h2>${esc(o.name)}</h2><p class="sub">${esc(o.desc)}</p>${o.plan.map((p,k)=>p?`<div class="day"><div class="dn">${DAYS[k].slice(0,3)}</div><div><div class="nm">${esc(p.name)}</div><div class="ms">${p.muscles.map(m=>MUS[m]).join(', ')}</div></div></div>`:'').join('')}<button class="btn" style="margin-top:12px" data-a="useplan" data-i="${i}">Usar este plan</button></section>`).join('')}
+      <p class="sub" style="text-align:center">Cambia los días por semana en Mi semana para ver otras alternativas.</p>
+    </div></div>`;
+  }
+  if(L.t==='multi'){
+    const P=L.p;
+    return `<div class="layer" style="z-index:${z}"><div class="page">
+      <div class="bar-top"><button class="back" data-a="pop" aria-label="Volver">‹</button><h2 class="grow" style="font-size:22px">Tus entrenamientos</h2></div>
+      <div class="card today"><p style="margin:0 0 6px"><b>${P.routines.length} ${P.routines.length===1?'rutina armada':'rutinas armadas'}</b> · objetivo principal: ${GOALS[P.objs[0]].n}</p><p style="margin:0">${esc(P.why)} ${P.routines.length>1&&P.muscles.length>1?'Cada rutina se enfoca en una parte distinta':'Cada rutina tiene un enfoque distinto'} y trae al menos 3 ejercicios por músculo.${P.objs.length>1&&P.routines.length&&P.routines[0].items.some(x=>x.fin)?' Los últimos ejercicios de cada rutina siguen tus otros objetivos: '+P.objs.slice(1).map(k=>GOALS[k].n.toLowerCase()).join(', ')+'.':''}</p></div>
+      ${P.routines.length?P.routines.map((r,ri)=>{const open=!!L.open[ri];return `<section class="card" style="padding:0">
+        <button class="rhead" data-a="toggleR" data-i="${ri}" aria-expanded="${open}"><span class="grow"><b>${esc(r.title)}</b><span class="meta">${r.items.length} ejercicios · unos ${minutesOf(r.items)} min</span></span><span class="chev" aria-hidden="true">${open?'⌃':'⌄'}</span></button>
+        ${open?`<div style="padding:0 14px 6px">${r.items.map((it,i)=>{const e=EXI[it.id];return `<div class="li"><button class="row grow" style="border:0;background:none;padding:0;text-align:left;gap:12px" data-a="detail" data-id="${e.id}">${thumbE(e)}<div class="grow"><h3>${esc(e.n)}</h3><div class="meta">${MUS[it.target]} · ${e.eq.map(x=>EQ[x]).join(' + ')}</div><div class="rx">${it.sets} × ${it.reps} · descanso ${it.rest} s</div>${it.fin?`<span class="tag o">Remate: ${GOALS[it.fin].n}</span>`:''}</div></button><button class="ibtn" data-a="swapm" data-r="${ri}" data-i="${i}" aria-label="Cambiar por otro ejercicio" title="Cambiar por otro">↻</button></div>`}).join('')}${r.short.length?`<div class="tipbox" style="margin-bottom:10px">${r.short.map(esc).join(' ')} Marca más equipo en Inicio para tener más opciones.</div>`:''}</div>`:''}
+        <div class="row wrap" style="padding:${open?'4px':'0'} 14px 14px"><button class="btn sm" data-a="startmulti" data-i="${ri}">Empezar</button><button class="btn sm soft" data-a="savemulti" data-i="${ri}">Guardar en Rutinas</button></div>
+      </section>`}).join(''):'<p class="empty">No hay ejercicios disponibles con tu equipo y tus limitaciones. Marca más equipo en Inicio.</p>'}
+      <button class="btn alt" data-a="regenm">Armar otras opciones</button>
+    </div></div>`;
+  }
+  if(L.t==='session'){
+    const s=L.s;
+    return `<div class="layer" style="z-index:${z}"><div class="page">
+      <div class="bar-top"><button class="back" data-a="pop" aria-label="Volver">‹</button><h2 class="grow" style="font-size:22px">${esc(s.title)}</h2></div>
+      <div class="card today"><p style="margin:0 0 6px"><b>${s.items.length} ejercicios · unos ${minutesOf(s.items)} min</b></p><p style="margin:0">${esc(s.why)} Trabajas: ${s.muscles.map(m=>MUS[m]).join(', ')}.</p></div>
+      ${s.missing.length?`<div class="tipbox" style="margin-bottom:12px">No encontré opciones para ${s.missing.map(m=>MUS[m].toLowerCase()).join(', ')} con tu equipo, nivel y limitaciones. Marca más equipo o cambia el nivel.</div>`:''}
+      ${s.items.length?s.items.map((it,i)=>{const e=EXI[it.id];return `<div class="li"><button class="row grow" style="border:0;background:none;padding:0;text-align:left;gap:12px" data-a="detail" data-id="${e.id}">${fig(e.view,{p:e.p,s:e.s,small:true})}<div class="grow"><h3>${esc(e.n)}</h3><div class="meta">${MUS[it.target]} · ${e.eq.map(x=>EQ[x]).join(' + ')}</div><div class="rx">${it.sets} × ${it.reps} · descanso ${it.rest} s</div></div></button><button class="ibtn" data-a="swap" data-i="${i}" aria-label="Cambiar por otro ejercicio" title="Cambiar por otro">↻</button></div>`}).join(''):'<p class="empty">No hay ejercicios que armar con estos filtros.</p>'}
+      <div class="stack" style="margin-top:14px">${s.items.length?'<button class="btn" data-a="startrun">Empezar entrenamiento</button>':''}${s.custom?'':'<button class="btn alt" data-a="regen">Armar otra opción</button>'}</div>
+    </div></div>`;
+  }
+  if(L.t==='run'){
+    const r=ui.run,it=r.items[r.i],e=EXI[it.id];
+    return `<div class="layer" style="z-index:${z}"><div class="page">
+      <div class="bar-top"><button class="back" data-a="exitrun" aria-label="Salir del entrenamiento">×</button><div class="grow"><div style="font-size:13px;color:var(--brown);font-weight:700">Ejercicio ${r.i+1} de ${r.items.length}</div></div></div>
+      <div class="dots">${r.items.map((_,k)=>`<i class="${r.done[k].every(Boolean)?'on':''}${k===r.i?' cur':''}"></i>`).join('')}</div>
+      <div class="row" style="gap:16px;align-items:center;margin-bottom:12px">${fig(e.view,{p:e.p,s:e.s,small:true})}<div><h2 style="font-size:23px">${esc(e.n)}</h2><div class="rx" style="margin-top:4px">${it.sets} × ${it.reps}</div><button class="btn sm soft" style="margin-top:8px" data-a="detail" data-id="${e.id}">Ver cómo se hace</button></div></div>
+      <span class="lbl">Marca cada serie al terminarla</span>
+      <div class="setrow">${r.done[r.i].map((d,k)=>`<button class="setbtn" data-a="set" data-k="${k}" aria-pressed="${d}">Serie ${k+1}${d?' ✓':''}</button>`).join('')}</div>
+      <span class="lbl">Registro (opcional)</span><div class="grid2"><div class="fl"><label for="lg-w">Peso usado (kg)</label><input class="field" id="lg-w" data-lg="w" inputmode="decimal" placeholder="${lastLog(e.id)?lastLog(e.id).w+' la última vez':'Ej.: 20'}" value="${esc(r.log[r.i].w)}"></div><div class="fl"><label for="lg-r">${e.mode==='t'?'Segundos logrados':'Repeticiones por serie'}</label><input class="field" id="lg-r" data-lg="r" inputmode="numeric" value="${esc(r.log[r.i].r)}"></div></div>
+      <div class="card" style="margin-top:16px;text-align:center"><div style="font-weight:800;color:var(--brown)" id="restlbl">${r.left>0?'Descansa':'Sin descanso activo'}</div><div class="timer" id="rest">${fmt(r.left)}</div>${r.left>0?'<button class="btn sm soft" data-a="skip">Saltar descanso</button>':''}</div>
+      <div class="row" style="margin-top:6px">${r.i>0?'<button class="btn alt grow" data-a="prev">Anterior</button>':''}${r.i<r.items.length-1?'<button class="btn grow" data-a="next">Siguiente</button>':'<button class="btn grow" data-a="finish">Terminar</button>'}</div>
+    </div></div>`;
+  }
+  if(L.t==='done'){
+    const w=weekProgress();
+    return `<div class="layer" style="z-index:${z}"><div class="page" style="text-align:center;padding-top:40px">
+      <div class="logo" style="width:72px;height:72px;margin:0 auto 16px;border-radius:22px"><svg viewBox="0 0 24 24" style="width:40px;height:40px" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></div>
+      <h2 style="font-size:28px">¡Sesión completada!</h2>
+      <p class="sub" style="font-size:16px;margin:10px 0 20px">Trabajaste ${L.muscles.map(m=>MUS[m].toLowerCase()).join(', ')}. Llevas ${w.done} ${w.done===1?'sesión':'sesiones'} esta semana${w.planned?' de '+w.planned+' planeadas':''}.</p>
+      <button class="btn" data-a="closeall">Volver al inicio</button></div></div>`;
+  }
+  if(L.t==='edit'){
+    const E=L.e;
+    return `<div class="layer sheet" style="z-index:${z}"><div class="panel" role="dialog" aria-label="Editar ${DAYS[E.d]}">
+      <div class="row"><h2 class="grow" style="font-size:22px">${DAYS[E.d]}</h2><button class="back" data-a="pop" aria-label="Cerrar">×</button></div>
+      <span class="lbl">Ese día</span>${seg('edrest',[[0,'Entreno'],[1,'Descanso']],E.rest?1:0)}
+      ${E.rest?'':`<div class="fl" style="margin-top:12px"><label for="ed-name">Nombre de la sesión</label><input class="field" id="ed-name" value="${esc(E.name)}"></div>
+      <span class="lbl">Músculos</span><div class="chips">${MK.map(m=>`<button class="chip" data-a="edm" data-m="${m}" aria-pressed="${E.m.indexOf(m)>-1}">${MUS[m]}</button>`).join('')}</div>`}
+      <button class="btn" style="margin-top:18px" data-a="saveday">Guardar día</button>
+    </div></div>`;
+  }
+  if(L.t==='rt'){
+    const r=L.r;
+    return `<div class="layer" style="z-index:${z}"><div class="page">
+      <div class="bar-top"><button class="back" data-a="pop" aria-label="Volver">‹</button><h2 class="grow" style="font-size:22px">${L.isNew?'Nueva rutina':'Editar rutina'}</h2></div>
+      <div class="card"><div class="fl"><label for="rt-name">Nombre de la rutina</label><input class="field" id="rt-name" data-rt="name" value="${esc(r.name)}" placeholder="Ej.: Pecho y tríceps en casa"></div></div>
+      ${r.items.length?r.items.map((it,i)=>{const e=EXI[it.id];return `<div class="li" style="flex-wrap:wrap">${thumbE(e)}<div class="grow"><h3>${esc(e.n)}</h3><div class="meta">${MUS[e.p]}</div></div><button class="ibtn" data-a="mvrt" data-i="${i}" data-v="-1" aria-label="Subir ${esc(e.n)}"${i===0?' disabled style="opacity:.3"':''}>↑</button><button class="ibtn" data-a="mvrt" data-i="${i}" data-v="1" aria-label="Bajar ${esc(e.n)}"${i===r.items.length-1?' disabled style="opacity:.3"':''}>↓</button><button class="ibtn" data-a="rmrt" data-i="${i}" aria-label="Quitar ${esc(e.n)}">×</button><div class="grid2" style="width:100%"><div class="fl"><label for="rs${i}">Series</label><input class="field" id="rs${i}" data-rt="sets" data-i="${i}" type="number" min="1" max="10" inputmode="numeric" value="${esc(it.sets)}"></div><div class="fl"><label for="rr${i}">${e.mode==='t'?'Tiempo':'Repeticiones'}</label><input class="field" id="rr${i}" data-rt="reps" data-i="${i}" value="${esc(it.reps)}"></div></div></div>`}).join(''):'<p class="empty">Agrega tu primer ejercicio.</p>'}
+      <div class="stack" style="margin-top:12px"><button class="btn alt" data-a="pickex">Agregar ejercicio</button><button class="btn" data-a="savert">Guardar rutina</button></div>
+    </div></div>`;
+  }
+  if(L.t==='pick'){
+    return `<div class="layer" style="z-index:${z}"><div class="page">
+      <div class="bar-top"><button class="back" data-a="pop" aria-label="Volver">‹</button><h2 class="grow" style="font-size:22px">Agregar ejercicios</h2></div>
+      <input class="search" id="pick-q" type="search" placeholder="Buscar ejercicio" value="${esc(L.q)}" aria-label="Buscar ejercicio">
+      <div class="chips" style="margin:10px 0"><button class="chip" data-a="pickm" data-m="" aria-pressed="${L.m===''}">Todos</button>${MK.map(m=>`<button class="chip" data-a="pickm" data-m="${m}" aria-pressed="${L.m===m}">${MUS[m]}</button>`).join('')}</div>
+      <div id="picklist">${pickItems(L)}</div>
+    </div></div>`;
+  }
+  return '';
+}
+function renderLayers(){
+  const st=[].map.call(document.querySelectorAll('#layers .layer'),l=>l.scrollTop);
+  $('#layers').innerHTML=ui.layers.map(layerHTML).join('');
+  [].forEach.call(document.querySelectorAll('#layers .layer'),(l,i)=>{if(st[i])l.scrollTop=st[i]});
+  document.body.style.overflow=ui.layers.length?'hidden':'';
+}
+const fmt=s=>String(Math.floor(s/60)).padStart(1,'0')+':'+String(s%60).padStart(2,'0');
+function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('on'),2600)}
+function openSession(s){
+  ui.layers=ui.layers.filter(l=>l.t!=='session');
+  ui.layers.push({t:'session',s,seed:s.muscles.slice(),fixed:s.fixed});
+  renderLayers();
+}
+function stopTimer(){if(ui.run&&ui.run.tm){clearInterval(ui.run.tm);ui.run.tm=null}}
+function startRest(sec){
+  const r=ui.run;stopTimer();r.left=sec;
+  r.tm=setInterval(()=>{
+    r.left--;
+    const el=$('#rest');if(el)el.textContent=fmt(Math.max(0,r.left));
+    if(r.left<=0){stopTimer();try{navigator.vibrate&&navigator.vibrate(200)}catch(e){};renderLayers()}
+  },1000);
+}
+
+/* ================= Acciones ================= */
+function act(a,el){
+  const d=el.dataset;
+  switch(a){
+    case 'tab':ui.tab=d.t;window.scrollTo(0,0);render();break;
+    case 'view':ui.view=d.v;render();break;
+    case 'mus':case 'musc':{
+      const i=S.sel.indexOf(d.m);if(i>-1)S.sel.splice(i,1);else S.sel.push(d.m);
+      save();render();break;}
+    case 'clearsel':S.sel=[];save();render();break;
+    case 'eq':{const i=S.p.equip.indexOf(d.k);if(i>-1)S.p.equip.splice(i,1);else S.p.equip.push(d.k);save();render();break;}
+    case 'lim':{const i=S.p.limits.indexOf(d.k);if(i>-1)S.p.limits.splice(i,1);else S.p.limits.push(d.k);save();render();break;}
+    case 'level':S.p.level=+d.v;save();render();break;
+    case 'minutes':S.p.minutes=+d.v;ui.customT=false;save();render();break;
+    case 'goal':{const o=S.p.objs,i=o.indexOf(d.k);if(i>-1){if(o.length===1){toast('Deja al menos un objetivo.');break}o.splice(i,1)}else o.push(d.k);S.p.goal=o[0];save();render();break;}
+    case 'days':S.p.days=+d.v;save();render();break;
+    case 'recommend':{const P=buildPlan(S.sel.slice());if(!P.routines.length){toast('No hay ejercicios con tu equipo y limitaciones. Marca más equipo.');break}openMulti(P);break;}
+    case 'detail':ui.layers.push({t:'detail',id:d.id});renderLayers();break;
+    case 'pop':case 'closeL':{
+      if(a==='closeL'&&el!==event.target)break;
+      const top=ui.layers[ui.layers.length-1];
+      if(top&&top.t==='run'){break}
+      ui.layers.pop();renderLayers();break;}
+    case 'closeall':stopTimer();ui.run=null;ui.layers=[];renderLayers();render();break;
+    case 'swap':{
+      const L=ui.layers.filter(l=>l.t==='session')[0],s=L.s,i=+d.i,cur=s.items[i];
+      const used=new Set(s.items.map(x=>x.id));
+      const c=cands(cur.target,used);
+      if(!c.length){toast('No hay otra opción con tu equipo. Marca más equipo en Inicio.');break}
+      s.items[i]=mk(c[0],cur.target);renderLayers();break;}
+    case 'regen':{
+      const L=ui.layers.filter(l=>l.t==='session')[0];
+      openSession(buildSession(L.s.muscles.slice(),L.s.title,L.s.why));break;}
+    case 'startrun':{
+      const L=ui.layers.filter(l=>l.t==='session')[0];
+      ui.run={items:L.s.items.map(x=>Object.assign({},x)),i:0,done:L.s.items.map(x=>Array(x.sets).fill(false)),left:0,tm:null,title:L.s.title,log:L.s.items.map(()=>({w:'',r:''}))};
+      ui.layers.push({t:'run'});renderLayers();break;}
+    case 'set':{
+      const r=ui.run,k=+d.k;r.done[r.i][k]=!r.done[r.i][k];
+      if(r.done[r.i][k]){
+        const last=r.i===r.items.length-1&&r.done[r.i].every(Boolean);
+        if(!last)startRest(r.items[r.i].rest);
+      }else{stopTimer();r.left=0}
+      renderLayers();break;}
+    case 'next':stopTimer();ui.run.left=0;ui.run.i++;renderLayers();break;
+    case 'prev':stopTimer();ui.run.left=0;ui.run.i--;renderLayers();break;
+    case 'skip':stopTimer();ui.run.left=0;renderLayers();break;
+    case 'exitrun':
+      if(confirmExit()){stopTimer();ui.run=null;ui.layers=ui.layers.filter(l=>l.t!=='run');renderLayers()}
+      break;
+    case 'finish':{
+      stopTimer();
+      const r=ui.run,ms=[];r.items.forEach(x=>{if(ms.indexOf(x.target)<0)ms.push(x.target)});
+      S.history.push({d:new Date().toISOString(),muscles:ms,n:r.items.length,name:r.title,sets:r.done.reduce((t,a)=>t+a.filter(Boolean).length,0),items:r.items.map((x,i)=>({id:x.id,sets:r.done[i].filter(Boolean).length,w:parseFloat(String(r.log[i].w).replace(',','.'))||0,r:String(r.log[i].r||'')}))});
+      S.history=S.history.slice(-120);save();
+      ui.run=null;ui.layers=[{t:'done',muscles:ms}];renderLayers();render();break;}
+    case 'genplan':ui.layers=ui.layers.filter(l=>l.t!=='plans');ui.layers.push({t:'plans',o:genPlans()});renderLayers();break;
+    case 'useplan':{const L=ui.layers.filter(l=>l.t==='plans')[0];S.plan=L.o[+d.i].plan;save();ui.layers=ui.layers.filter(l=>l.t!=='plans');renderLayers();render();toast('Plan aplicado. Ajusta cualquier día con el lápiz.');break;}
+    case 'planday':{
+      const p=S.plan[+d.d];if(!p)break;
+      openSession(buildSession(p.muscles.slice(),p.name,`Es tu sesión de ${DAYS[+d.d].toLowerCase()}.`));break;}
+    case 'editday':{
+      const p=S.plan[+d.d];
+      ui.layers.push({t:'edit',e:{d:+d.d,rest:!p,name:p?p.name:'Entrenamiento',m:p?p.muscles.slice():[]}});renderLayers();break;}
+    case 'edrest':{const E=ui.layers[ui.layers.length-1].e;keepName(E);E.rest=d.v==='1';renderLayers();break;}
+    case 'edm':{const E=ui.layers[ui.layers.length-1].e;keepName(E);const i=E.m.indexOf(d.m);if(i>-1)E.m.splice(i,1);else E.m.push(d.m);renderLayers();break;}
+    case 'saveday':{
+      const E=ui.layers[ui.layers.length-1].e;keepName(E);
+      if(E.rest)S.plan[E.d]=null;
+      else{
+        if(!E.m.length){toast('Elige al menos un músculo para ese día.');break}
+        S.plan[E.d]={name:(E.name||'Entrenamiento').trim()||'Entrenamiento',muscles:E.m.slice()};
+      }
+      save();ui.layers.pop();renderLayers();render();break;}
+    case 'customt':ui.customT=true;render();break;
+    case 'opengrp':ui.grp=d.g;ui.q='';window.scrollTo(0,0);render();break;
+    case 'libback':ui.grp=null;window.scrollTo(0,0);render();break;
+    case 'toggleR':{const L=ui.layers.filter(l=>l.t==='multi')[0];L.open[d.i]=!L.open[d.i];renderLayers();break;}
+    case 'swapm':{
+      const L=ui.layers.filter(l=>l.t==='multi')[0],r=L.p.routines[+d.r],i=+d.i,cur=r.items[i];
+      const used=new Set();L.p.routines.forEach(x=>x.items.forEach(it=>used.add(it.id)));
+      const c=cands(cur.target,used);
+      if(!c.length){toast('No hay otra opción con tu equipo. Marca más equipo en Inicio.');break}
+      const fin=cur.fin;
+      r.items[i]=Object.assign(mk(c[0],cur.target,r.gk),fin?Object.assign(rx(c[0],fin),{fin}):{});
+      renderLayers();break;}
+    case 'startmulti':{
+      const L=ui.layers.filter(l=>l.t==='multi')[0],r=L.p.routines[+d.i];
+      ui.run={items:r.items.map(x=>Object.assign({},x)),i:0,done:r.items.map(x=>Array(x.sets).fill(false)),left:0,tm:null,title:r.title,log:r.items.map(()=>({w:'',r:''}))};
+      ui.layers.push({t:'run'});renderLayers();break;}
+    case 'savemulti':{
+      const L=ui.layers.filter(l=>l.t==='multi')[0],r=L.p.routines[+d.i];
+      S.routines.push({id:'r'+Date.now(),name:r.title,items:r.items.map(x=>({id:x.id,sets:x.sets,reps:x.reps}))});
+      save();toast('Guardada en Rutinas.');break;}
+    case 'regenm':{
+      const L=ui.layers.filter(l=>l.t==='multi')[0];
+      const p=buildPlan(L.p.muscles.slice());p.why=L.p.why;
+      L.p=p;L.open={0:true};renderLayers();break;}
+    case 'gohome':ui.tab='home';window.scrollTo(0,0);render();break;
+    case 'duprt':{const r=S.routines.filter(x=>x.id===d.id)[0];if(!r)break;const c=JSON.parse(JSON.stringify(r));c.id='r'+Date.now();c.name=r.name+' (copia)';S.routines.splice(S.routines.indexOf(r)+1,0,c);save();render();toast('Rutina duplicada.');break;}
+    case 'mvrt':{const rt=ui.layers.filter(l=>l.t==='rt')[0],i=+d.i,j=i+(+d.v);if(j<0||j>=rt.r.items.length)break;const a=rt.r.items;const t=a[i];a[i]=a[j];a[j]=t;renderLayers();break;}
+    case 'newrt':ui.layers.push({t:'rt',isNew:true,r:{id:'r'+Date.now(),name:'',items:[]}});renderLayers();break;
+    case 'editrt':{const r=S.routines.filter(x=>x.id===d.id)[0];if(r){ui.layers.push({t:'rt',isNew:false,r:JSON.parse(JSON.stringify(r))});renderLayers()}break;}
+    case 'delrt':
+      if(ui.cdel===d.id){S.routines=S.routines.filter(x=>x.id!==d.id);ui.cdel=null;save();render()}
+      else{ui.cdel=d.id;render();toast('Toca otra vez para borrar la rutina.')}
+      break;
+    case 'startrt':{
+      const r=S.routines.filter(x=>x.id===d.id)[0];if(!r)break;
+      const rest=(GOALS[goalKey()]||GOALS.musculo).rest;
+      const items=r.items.filter(it=>EXI[it.id]).map(it=>({id:it.id,target:EXI[it.id].p,sets:it.sets,reps:it.reps,rest}));
+      if(!items.length){toast('La rutina está vacía. Edítala y agrega ejercicios.');break}
+      const ms=[];items.forEach(x=>{if(ms.indexOf(x.target)<0)ms.push(x.target)});
+      openSession({title:r.name,why:'Es tu rutina personalizada.',muscles:ms,items,missing:[],custom:true});break;}
+    case 'pickex':ui.layers.push({t:'pick',q:'',m:''});renderLayers();break;
+    case 'pickm':{const L=ui.layers[ui.layers.length-1];L.m=d.m;renderLayers();break;}
+    case 'pickadd':{
+      const rt=ui.layers.filter(l=>l.t==='rt')[0],L=ui.layers[ui.layers.length-1];
+      const i=rt.r.items.findIndex(x=>x.id===d.id);
+      if(i>-1)rt.r.items.splice(i,1);
+      else{const e=EXI[d.id],g=GOALS[goalKey()]||GOALS.musculo;rt.r.items.push({id:e.id,sets:g.sets,reps:e.mode==='t'?[30,40,50][e.lv-1]+' s':g.reps})}
+      $('#picklist').innerHTML=pickItems(L);break;}
+    case 'rmrt':{const rt=ui.layers.filter(l=>l.t==='rt')[0];rt.r.items.splice(+d.i,1);renderLayers();break;}
+    case 'savert':{
+      const rt=ui.layers.filter(l=>l.t==='rt')[0],r=rt.r;
+      if(!(r.name||'').trim()){toast('Ponle un nombre a la rutina.');break}
+      if(!r.items.length){toast('Agrega al menos un ejercicio.');break}
+      r.name=r.name.trim();
+      const i=S.routines.findIndex(x=>x.id===r.id);
+      if(i>-1)S.routines[i]=r;else S.routines.push(r);
+      save();ui.layers=ui.layers.filter(l=>l.t!=='rt'&&l.t!=='pick');renderLayers();render();toast('Rutina guardada.');break;}
+    case 'calprev':{const c=ui.cal;c.m--;if(c.m<0){c.m=11;c.y--}render();break;}
+    case 'calnext':{const c=ui.cal;c.m++;if(c.m>11){c.m=0;c.y++}render();break;}
+    case 'selday':ui.selDay=d.k;render();break;
+    case 'progex':ui.progEx=el.value;render();break;
+    case 'addgoal':addGoal();break;
+    case 'goaldone':S.p.goals[+d.i].done=el.checked;save();render();break;
+    case 'delgoal':S.p.goals.splice(+d.i,1);save();render();break;
+  }
+}
+function keepName(E){const n=$('#ed-name');if(n)E.name=n.value}
+function confirmExit(){return true}
+function addGoal(){
+  const inp=$('#newgoal');if(!inp)return;
+  const t=inp.value.trim();if(!t){toast('Escribe la meta antes de agregarla.');return}
+  S.p.goals.push({t:t.slice(0,120),done:false});save();render();
+}
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-a]');if(!t)return;
+  if(t.tagName==='INPUT')return;
+  act(t.dataset.a,t);
+});
+document.addEventListener('change',e=>{
+  const t=e.target;
+  if(t.id==='mins'){const v=Math.max(10,Math.min(180,Math.round(+t.value)||S.p.minutes));S.p.minutes=v;save();render();return}
+  if(t.matches&&(t.matches('input[type=checkbox][data-a]')||t.matches('select[data-a]')))act(t.dataset.a,t);
+});
+document.addEventListener('keydown',e=>{
+  if((e.key==='Enter'||e.key===' ')&&e.target.matches&&e.target.matches('svg [role=button]')){e.preventDefault();act(e.target.dataset.a,e.target)}
+  if(e.key==='Enter'&&e.target.id==='newgoal'){e.preventDefault();addGoal()}
+  if(e.key==='Escape'&&ui.layers.length){const top=ui.layers[ui.layers.length-1];if(top.t!=='run'&&top.t!=='done'){ui.layers.pop();renderLayers()}}
+});
+document.addEventListener('input',e=>{
+  const t=e.target;
+  if(t.dataset&&t.dataset.f){S.p[t.dataset.f]=t.value;save()}
+  if(t.id==='mins'){const v=Math.round(+t.value);if(v>=10&&v<=180){S.p.minutes=v;save()}}
+  if(t.id==='q'){ui.q=t.value;$('#liblist').innerHTML=libItems()}
+  if(t.dataset&&t.dataset.rt){
+    const L=ui.layers.filter(l=>l.t==='rt')[0];
+    if(L){const k=t.dataset.rt;if(k==='name')L.r.name=t.value;else{const it=L.r.items[+t.dataset.i];if(it)it[k]=k==='sets'?Math.max(1,Math.min(10,+t.value||1)):t.value}}
+  }
+  if(t.id==='pick-q'){const L=ui.layers[ui.layers.length-1];L.q=t.value;$('#picklist').innerHTML=pickItems(L)}
+  if(t.dataset&&t.dataset.lg&&ui.run){ui.run.log[ui.run.i][t.dataset.lg]=t.value}
+});
+render();
+</script>
+</body>
+</html>
